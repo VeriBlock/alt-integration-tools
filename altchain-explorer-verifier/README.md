@@ -16,3 +16,7 @@ The tool works with program arguments, those are the available ones:
 |authUser       |                                               | The explorer auth user if any         |
 |authPassword   |                                               | The explorer auth password if any     |
 |loadDelay      | 40                                            | The specific delay used by the parser |
+
+#### Build & run
+* Run the command ```gradlew build``` to build the project (the build will appear at the ```build/distributions``` folder)
+* Run ```altchain-explorer-verifier``` with the desired program arguments
