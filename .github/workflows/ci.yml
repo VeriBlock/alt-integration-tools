@@ -1,0 +1,29 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  altchain_explorer_verifier:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: AdoptOpenJDK/install-jdk@v1
+        with:
+          version: '13'
+          architecture: x64
+      - name: build
+        run:  cd altchain-explorer-verifier && ./gradlew build
+      - name: unarchive
+        run:  cd altchain-explorer-verifier/build/distributions/ && unzip altchain-explorer-verifier-1.0-SNAPSHOT.zip
+      - uses: actions/upload-artifact@v2
+        if: success()
+        with:
+          name: altchain-explorer-verifier-1.0-SNAPSHOT
+          path: altchain-explorer-verifier/build/distributions/altchain-explorer-verifier-1.0-SNAPSHOT
+          if-no-files-found: error
