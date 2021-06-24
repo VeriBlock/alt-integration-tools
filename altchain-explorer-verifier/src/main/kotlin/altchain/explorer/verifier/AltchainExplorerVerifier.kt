@@ -119,12 +119,12 @@ class AltchainExplorerVerifier(
                     )
                 }
             }
-            if (blockCount == collectedBlockData.size) {
+            if (collectedBlockData.size != 0) {
                 val nAtvCount = collectedBlockData.count { it.nAtv?.toIntOrNull() ?: 0 > 0 }
                 val nVtbCount = collectedBlockData.count { it.nVtb?.toIntOrNull() ?: 0 > 0 }
                 val nVbkCount = collectedBlockData.count { it.nVbk?.toIntOrNull() ?: 0 > 0 }
                 val isOk = nAtvCount > 0 && nVtbCount > 0 && nVbkCount > 0
-                logger.info { "${if (isOk) "+" else "-"} Checked the last $blockCount blocks and found $nAtvCount with at least one ATV, $nVtbCount with at least one VTB and $nVbkCount with at least one VBK" }
+                logger.info { "${if (isOk) "+" else "-"} Checked the last ${collectedBlockData.size} blocks (out of $blockCount requested) and found $nAtvCount with at least one ATV, $nVtbCount with at least one VTB and $nVbkCount with at least one VBK" }
             } else {
                 logger.info { "Failed to parse the blocks" }
             }
