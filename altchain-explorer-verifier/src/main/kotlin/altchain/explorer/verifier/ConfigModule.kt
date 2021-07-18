@@ -1,5 +1,6 @@
 package altchain.explorer.verifier
 
+import altchain.explorer.verifier.api.Auth
 import altchain.explorer.verifier.util.Configuration
 import org.koin.core.module.Module
 import org.koin.dsl.module
@@ -9,8 +10,7 @@ data class ExplorerConfig(
    val blockCount: Int = 50,
    val loadDelay: Int = 40,
    val type: String = "BTC",
-   val authUser: String? = null,
-   val authPassword: String? = null
+   val auth: Auth? = null
 )
 
 fun configModule(configuration: Configuration): Module {

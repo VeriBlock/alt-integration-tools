@@ -1,6 +1,7 @@
 package altchain.explorer.verifier.service.explorers
 
 import altchain.explorer.verifier.ExplorerConfig
+import altchain.explorer.verifier.api.Auth
 import altchain.explorer.verifier.util.toBase64
 import com.gargoylesoftware.htmlunit.IncorrectnessListener
 import com.gargoylesoftware.htmlunit.SilentCssErrorHandler
@@ -24,7 +25,7 @@ enum class ExplorerType {
     ETH
 }
 
-fun WebClient.addDefaultOptions(authUser: String?, authPassword: String?) {
+fun WebClient.addDefaultOptions(auth: Auth?) {
     options.isThrowExceptionOnScriptError = false
     options.isThrowExceptionOnFailingStatusCode = false
     options.isPrintContentOnFailingStatusCode = false
@@ -41,8 +42,8 @@ fun WebClient.addDefaultOptions(authUser: String?, authPassword: String?) {
     options.isCssEnabled = false
     options.timeout = 300000 // 5 Min timeout
 
-    if (authUser != null && authPassword != null) {
-        val base64Password = "$authUser:$authPassword".toBase64()
+    if (auth != null) {
+        val base64Password = "${auth.username}:${auth.password}".toBase64()
         addRequestHeader("Authorization", "Basic $base64Password")
     }
 }

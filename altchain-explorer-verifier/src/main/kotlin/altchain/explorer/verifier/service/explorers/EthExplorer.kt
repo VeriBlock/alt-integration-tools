@@ -13,7 +13,7 @@ class EthExplorer : Explorer {
 
     override suspend fun getExplorerState(explorerConfig: ExplorerConfig): Set<BlockInfo> {
         WebClient(BrowserVersion.FIREFOX_78).use { webClient ->
-            webClient.addDefaultOptions(explorerConfig.authUser, explorerConfig.authPassword)
+            webClient.addDefaultOptions(explorerConfig.auth)
             webClient.options.isJavaScriptEnabled = true
 
             val builtEthExplorerUrl = when {

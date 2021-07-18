@@ -19,7 +19,6 @@ import io.ktor.util.pipeline.*
 
 const val basicAuthName = "basicAuth"
 
-
 inline fun<T> NormalOpenAPIRoute.auth(provider: AuthProvider<T>, crossinline route: OpenAPIAuthenticatedRoute<T>.()->Unit = {}): OpenAPIAuthenticatedRoute<T> {
     return provider.apply(this).apply {
         route()
