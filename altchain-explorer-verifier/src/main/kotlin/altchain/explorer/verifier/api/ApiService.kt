@@ -1,5 +1,8 @@
 package altchain.explorer.verifier.api
 
+import altchain.explorer.verifier.api.auth.BasicProvider
+import altchain.explorer.verifier.api.auth.auth
+import altchain.explorer.verifier.api.auth.installAuth
 import altchain.explorer.verifier.api.controller.ApiController
 import altchain.explorer.verifier.util.createLogger
 import com.papsign.ktor.openapigen.OpenAPIGen
@@ -64,6 +67,12 @@ class ApiService(
             install(ForwardedHeaderSupport)
             install(XForwardedHeaderSupport)
 
+            installAuth(config)
+
+            val authProvider  = BasicProvider(
+                config.auth
+            )
+
             install(OpenAPIGen) {
                 info {
                     title = "Altchain Explorer Verifier"
@@ -73,6 +82,7 @@ class ApiService(
                         email = "https://veriblock.org"
                     }
                 }
+                addModules(authProvider)
                 replaceModule(DefaultSchemaNamer, object: SchemaNamer {
                     val regex = Regex("[A-Za-z0-9_.]+")
                     override fun get(type: KType): String {
@@ -100,9 +110,11 @@ class ApiService(
                     call.respondRedirect("/swagger-ui/index.html?url=/openapi.json", true)
                 }
                 apiRouting {
-                    for (controller in controllers) {
-                        with(controller) {
-                            registerApi()
+                    auth(authProvider) {
+                        for (controller in controllers) {
+                            with(controller) {
+                                registerApi()
+                            }
                         }
                     }
                 }

@@ -22,6 +22,8 @@ data class ExplorerStateResponse(
     val atvBlocks: Set<Int>,
     val vtbBlocks: Set<Int>,
     val vbkBlocks: Set<Int>,
+    val isOkByBlocks: Boolean,
+    val isOkByTime: Boolean,
     val isOk: Boolean,
     val addedAt: Instant
 )

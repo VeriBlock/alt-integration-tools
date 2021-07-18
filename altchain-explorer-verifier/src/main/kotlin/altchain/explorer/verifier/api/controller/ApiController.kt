@@ -1,7 +1,8 @@
 package altchain.explorer.verifier.api.controller;
 
-import com.papsign.ktor.openapigen.route.path.normal.NormalOpenAPIRoute
+import com.papsign.ktor.openapigen.route.path.auth.OpenAPIAuthenticatedRoute
+import io.ktor.auth.UserIdPrincipal
 
 interface ApiController {
-    fun NormalOpenAPIRoute.registerApi()
+    fun OpenAPIAuthenticatedRoute<UserIdPrincipal>.registerApi()
 }

@@ -17,6 +17,7 @@ class NotFoundException(override val message: String) : RuntimeException()
 class InternalErrorException(override val message: String) : RuntimeException()
 class ForbiddenException(override val message: String) : RuntimeException()
 class UnauthorizedException(override val message: String) : RuntimeException()
+class BadPrincipalException : Exception()
 
 fun Application.installExceptionHandling(extraConfig: StatusPages.Configuration.() -> Unit = {}) {
     install(StatusPages) {
