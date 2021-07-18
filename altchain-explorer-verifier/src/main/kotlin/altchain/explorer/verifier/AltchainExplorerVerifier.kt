@@ -31,8 +31,8 @@ fun main() {
     val explorerStatusService: ExplorerStatusService = koin.get()
 
     Runtime.getRuntime().addShutdownHook(Thread {
-        apiService.stop()
         explorerStatusService.stop()
+        apiService.stop()
     })
 
     try {

@@ -84,5 +84,6 @@ class ExplorerStatusService(
     
     fun stop() {
         coroutineScope.cancel()
+        explorerParserCoroutineScope.cancel()
     }
 }
