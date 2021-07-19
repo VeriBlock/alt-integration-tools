@@ -78,3 +78,14 @@ dependencies {
 
 application.applicationName = "altchain-explorer-verifier"
 application.mainClassName = "altchain.explorer.verifier.AltchainExplorerVerifierKt"
+
+distributions {
+    getByName("main") {
+        contents {
+            from ("./src/main/resources/application-default.conf") {
+                into("bin")
+            }
+            rename("application-default.conf", "application.conf")
+        }
+    }
+}
