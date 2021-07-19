@@ -20,6 +20,6 @@ fun serviceModule(configuration: Configuration): Module {
             )
         }
 
-        single { ExplorerStatusService(get(), get(), get(), get()) }
+        single { ExplorerStatusService(get(), get(), get()) }
     }
 }

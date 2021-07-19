@@ -15,11 +15,11 @@ The configuration can be done through the 'application.conf' file:
 | api.auth.username             |                                               | The API basic auth username               |
 | api.auth.password             |                                               | The API basic auth password               |
 | database.path                 | ./explorer-state.db                           | The database path and file name           |
-| checkDelay                    | 10                                            | The delay in minutes between checks       |
 | explorers.name.url            | https://testnet.explore.vbtc.veriblock.org    | The explorer url to check                 |
 | explorers.name.blockCount     | 50                                            | The number of blocks to check             |
 | explorers.name.type           | BTC                                           | The explorer type: BTC or ETH             |
 | explorers.name.loadDelay      | 40                                            | The specific delay used by the parser     |
+| explorers.name.checkDelay     | 10                                            | The delay in minutes between checks       |
 
 Configuration example:
 ```

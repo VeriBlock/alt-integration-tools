@@ -9,6 +9,7 @@ data class ExplorerConfig(
    val url: String = error("Please set the explorer url configuration (explorers.explorer.url)"),
    val blockCount: Int = 50,
    val loadDelay: Int = 40,
+   val checkDelay: Long = 10,
    val type: String = "BTC",
    val auth: Auth? = null
 )
