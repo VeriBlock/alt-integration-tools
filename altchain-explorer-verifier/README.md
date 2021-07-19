@@ -35,20 +35,20 @@ database {
     path = "./explorer-stats.db"
 }
 
-checkDelay = 3
-
 explorers {
     veriblockExplorer: {
         url = "https://testnet.explore.vbtc.veriblock.org"
         blockCount = 50
         type = "BTC"
         loadDelay = 40
+        checkDelay = 10
     },
     bitcExplorer: {
         url = "https://testnet.explore.bitc.veriblock.org"
         blockCount = 50
         type = "BTC"
         loadDelay = 40
+        checkDelay = 10
     }
 }
 ```
