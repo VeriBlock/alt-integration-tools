@@ -1,6 +1,6 @@
 ## Altchain Network Monitor Tool
 The Altchain Network Monitor Tool is a tool capable to monitor one or multiple VeriBlock Altchains and all the pieces involved in the network on a single place, 
-providing valuable information from the network and all the involved parts.
+providing valuable information from the network status and all the involved parts.
 
 All the generated information is stored into a SQLite database also the results can be accessed through an API.
 
