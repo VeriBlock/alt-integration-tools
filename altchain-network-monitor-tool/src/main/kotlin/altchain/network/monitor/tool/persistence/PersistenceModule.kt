@@ -3,13 +3,11 @@ package altchain.network.monitor.tool.persistence
 import altchain.network.monitor.tool.persistence.repositories.AbfiMonitorRepository
 import altchain.network.monitor.tool.persistence.repositories.AltDaemonMonitorRepository
 import altchain.network.monitor.tool.persistence.repositories.ExplorerMonitorRepository
-import altchain.network.monitor.tool.persistence.repositories.GlobalVariableRepository
 import altchain.network.monitor.tool.persistence.repositories.MinerMonitorRepository
 import altchain.network.monitor.tool.persistence.repositories.NodeCoreMonitorRepository
 import altchain.network.monitor.tool.persistence.tables.AbfiMonitorTable
 import altchain.network.monitor.tool.persistence.tables.AltDaemonMonitorTable
 import altchain.network.monitor.tool.persistence.tables.ExplorerMonitorTable
-import altchain.network.monitor.tool.persistence.tables.GlobalVariableTable
 import altchain.network.monitor.tool.persistence.tables.MinerMonitorTable
 import altchain.network.monitor.tool.persistence.tables.NodeCoreMonitorTable
 import com.zaxxer.hikari.HikariConfig
@@ -48,7 +46,6 @@ fun persistenceModule(configuration: Configuration): Module {
                         AbfiMonitorTable,
                         AltDaemonMonitorTable,
                         ExplorerMonitorTable,
-                        GlobalVariableTable,
                         MinerMonitorTable,
                         NodeCoreMonitorTable
                     )
@@ -59,7 +56,6 @@ fun persistenceModule(configuration: Configuration): Module {
         single { AbfiMonitorRepository(get()) }
         single { AltDaemonMonitorRepository(get()) }
         single { ExplorerMonitorRepository(get()) }
-        single { GlobalVariableRepository(get()) }
         single { MinerMonitorRepository(get()) }
         single { NodeCoreMonitorRepository(get()) }
     }
