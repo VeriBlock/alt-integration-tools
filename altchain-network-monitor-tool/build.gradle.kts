@@ -16,7 +16,6 @@ repositories {
     mavenCentral()
     jcenter()
     google()
-    maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
     maven("https://jitpack.io")
     maven("https://artifactory.veriblock.com/artifactory/libs-snapshot-local/")
     maven("https://artifactory.veriblock.com/artifactory/libs-release-local/")
