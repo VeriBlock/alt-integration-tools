@@ -1,7 +1,7 @@
 <configuration>
 
 	<properties>
-		<property name="appName" value="altchain-explorer-verifier" />
+		<property name="appName" value="altchain-network-monitor-tool" />
 		<property name="logPath" value="${env:ALTCHAIN_NETWORK_MONITOR_TOOL_LOG_PATH:-logs}" />
 		<property name="logLevel" value="${env:ALTCHAIN_NETWORK_MONITOR_TOOL_LOG_LEVEL:-INFO}" />
 	</properties>
