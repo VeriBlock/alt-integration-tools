@@ -7,12 +7,13 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import kotlinx.coroutines.Job
 
 inline fun CoroutineScope.launchWithFixedDelay(
     initialDelayMillis: Long = 0,
     periodMillis: Long = 1000L,
     crossinline block: suspend CoroutineScope.() -> Unit
-) = launch {
+): Job = launch {
     delay(initialDelayMillis)
     while (isActive) {
         block()

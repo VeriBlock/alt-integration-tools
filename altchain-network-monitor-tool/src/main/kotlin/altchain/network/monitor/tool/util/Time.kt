@@ -1,9 +1,7 @@
 package altchain.network.monitor.tool.util
 
-import java.time.format.DateTimeFormatter
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
-import kotlinx.datetime.toJavaInstant
 import kotlin.time.Duration.Companion.nanoseconds
 import kotlin.time.ExperimentalTime
 
@@ -19,5 +17,3 @@ fun now(): Instant {
     // Subtract the nanoseconds from the retrieved time
     return now - nanoseconds(nanosecondsOfMilli)
 }
-
-fun Instant.formatAsIsoDateTime(): String = DateTimeFormatter.ISO_INSTANT.format(toJavaInstant())

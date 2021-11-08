@@ -1,6 +1,7 @@
 package altchain.network.monitor.tool.service.metrics
 
 import io.micrometer.core.instrument.Gauge
+import io.micrometer.core.instrument.binder.MeterBinder
 import io.micrometer.core.instrument.binder.jvm.ClassLoaderMetrics
 import io.micrometer.core.instrument.binder.jvm.JvmGcMetrics
 import io.micrometer.core.instrument.binder.jvm.JvmMemoryMetrics
@@ -14,7 +15,7 @@ import io.micrometer.prometheus.PrometheusMeterRegistry
 object Metrics {
     val registry = PrometheusMeterRegistry(PrometheusConfig.DEFAULT)
 
-    val meterBinders = listOf(
+    val meterBinders: List<MeterBinder> = listOf(
         UptimeMetrics(),
         ProcessorMetrics(),
         Log4j2Metrics(),

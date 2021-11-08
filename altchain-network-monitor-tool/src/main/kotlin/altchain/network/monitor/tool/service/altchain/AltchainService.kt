@@ -10,7 +10,7 @@ import org.veriblock.sdk.alt.plugin.PluginService
 class AltchainService(
     configuration: List<Configuration>
 ) {
-    private val pluginServices = configuration.map {
+    private val pluginServices: List<PluginService> = configuration.map {
         PluginService(it)
     }
 

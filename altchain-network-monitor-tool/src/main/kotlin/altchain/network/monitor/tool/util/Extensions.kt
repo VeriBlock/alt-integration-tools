@@ -13,7 +13,7 @@ inline fun <T> List<T>.indexOfFirstOrNull(predicate: (T) -> Boolean): Int? {
 
 fun String.toBase64(): String = Base64.getEncoder().encodeToString(this.toByteArray())
 
-fun String.equalsIgnoreCase(other: String?) = equals(other, true)
+fun String.equalsIgnoreCase(other: String?): Boolean = equals(other, true)
 
 fun Set<String>.toLowerCase(): Set<String> = asSequence().map {
     it.lowercase()

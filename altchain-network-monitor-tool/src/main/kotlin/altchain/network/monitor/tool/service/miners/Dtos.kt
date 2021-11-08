@@ -1,6 +1,5 @@
 package altchain.network.monitor.tool.service.miners
 
-import com.papsign.ktor.openapigen.annotations.Response
 import kotlinx.serialization.Serializable
 
 @Serializable
