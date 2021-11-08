@@ -1,11 +1,11 @@
 ## Altchain Network Monitor Tool
-The Altchain Network Monitor Tool is a tool capable to monitor one or multiple VeriBlock Altchains and all the pieces involved in the network on a single place, 
+The Altchain Network Monitor Tool is a tool capable to monitor one or multiple VeriBlock Altchains and all the pieces involved in the network in a single place, 
 providing valuable information from the network status and all the involved parts.
 
-All the generated information is stored into a SQLite database also the results can be accessed through an API.
+All the generated information is stored into a SQLite database so that the results can be accessed through an API.
 
 ### Supported Software
-The tool is capable to monitor the next software:
+The tool is capable to monitor any amount of instances of the next pieces of software:
 * VeriBlock NodeCore daemon
 * VeriBlock Altchain Block Finality Indicator (vBFI)
 * [VeriBlock Altchain PoP Miner (APM)](https://github.com/VeriBlock/nodecore/tree/master/pop-miners/altchain-pop-miner)
@@ -166,35 +166,33 @@ securityInheriting {
 }
 ```
 
-### Healthy Formulas
-The Altchain Network Monitor Tool collects a lot of data from the different network components to decide if the network is healthy or not, 
-an Altchain Network is considered as healthy only if all the involved components are healthy as well, here you can see what data is used to decide the healthy status: 
+### Logic behind each health check
+The Altchain Network Monitor Tool collects big data samples from the different network components to decide if the network is healthy or not. 
+An Altchain Network is considered healthy only if all its involved components are healthy as well. 
 
-* NodeCore: 
-  * The latest collected data is from the last configured *maxHealthyByTime* minutes
+Here you can see what data is used to decide the healthy status of each kind of component: 
+
+* Global (for all the components):
+  * The tool collects data samples every ``checkDelay``, it uses the newest of these samples only if its age is less than ``maxHealthyByTime``
+* NodeCore:
   * The configured daemons are synchronized
-  * The amount of healthy daemons is greater or equal than the configured *minPercentageHealthyNodeCores*
+  * The amount of healthy daemons is greater or equal than the configured ``minPercentageHealthyNodeCores``
 * Altchain daemon:
-  * The latest collected data is from the last configured *maxHealthyByTime* minutes
   * The configured daemons are synchronized
-  * The amount of healthy daemons is greater or equal than the configured *minPercentageHealthyAltDaemons*
+  * The amount of healthy daemons is greater or equal than the configured ``minPercentageHealthyAltDaemons``
 * Altchain Bitcoin Finality Indicator:
-  * The latest collected data is from the last configured *maxHealthyByTime* minutes
   * The *lastFinalizedBlockBtc* property is present
-  * The amount of healthy ABFIs is greater or equal than the configured *minPercentageHealthyAbfis*
+  * The amount of healthy ABFIs is greater or equal than the configured ``minPercentageHealthyAbfis``
 * Explorer:
-  * The latest collected data is from the last configured *maxHealthyByTime* minutes
-  * There is at least one ATV, VTB and VBK on the last configured *blockCount*
-  * The amount of healthy explorers is greater or equal than the configured *minPercentageHealthyExplorers*
+  * There is at least one ATV, VTB and VBK on the last configured ``blockCount``
+  * The amount of healthy explorers is greater or equal than the configured ``minPercentageHealthyExplorers``
 * Miners:
   * VPM:
-    * The latest collected data is from the last configured *maxHealthyByTime* minutes
-    * The percentage of failed operations is lower than the configured *maxPercentageNotHealthyVpmOperations*
-    * The amount of healthy miners is greater or equal than the configured *minPercentageHealthyVpms*
+    * The percentage of failed operations is lower than the configured ``maxPercentageNotHealthyVpmOperations``
+    * The amount of healthy miners is greater or equal than the configured ``minPercentageHealthyVpms``
   * APM:
-    * The latest collected data is from the last configured *maxHealthyByTime* minutes
-    * The percentage of failed operations is lower than the configured *maxPercentageNotHealthyApmOperations*
-    * The amount of healthy miners is greater or equal than the configured *minPercentageHealthyApms*
+    * The percentage of failed operations is lower than the configured ``maxPercentageNotHealthyApmOperations``
+    * The amount of healthy miners is greater or equal than the configured ``minPercentageHealthyApms``
 
 
 ### API Endpoints
