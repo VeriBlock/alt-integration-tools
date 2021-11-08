@@ -181,7 +181,7 @@ Here you can see what data is used to decide the healthy status of each kind of 
   * The configured daemons are synchronized
   * The amount of healthy daemons is greater or equal than the configured ``minPercentageHealthyAltDaemons``
 * Altchain Bitcoin Finality Indicator:
-  * The *lastFinalizedBlockBtc* property is present
+  * The ``lastFinalizedBlockBtc`` property is present
   * The amount of healthy ABFIs is greater or equal than the configured ``minPercentageHealthyAbfis``
 * Explorer:
   * There is at least one ATV, VTB and VBK on the last configured ``blockCount``
