@@ -19,11 +19,13 @@ The tool is capable to monitor any amount of instances of the next pieces of sof
 The initial configuration can be done through the 'application.conf' file:
 
 | Configuration                 | Default                                       | Description                                                                                                                                      |
-|-------------------------------|-----------------------------------------------|-------------------------------------------|
-| api.port                      | 8080                                          | The API port                              |
-| api.auth.username             |                                               | The API basic auth username               |
-| api.auth.password             |                                               | The API basic auth password               |
-| database.path                 | ./network-monitor-tool.db                     | The database path and file name           |
+|-------------------------------|-----------------------------------------------|---------------------------------------------|
+| api.port                      | 8080                                          | The API port                                |
+| api.auth.username             |                                               | The API basic auth username                 |
+| api.auth.password             |                                               | The API basic auth password                 |
+| database.path                 | ./network-monitor-tool.db                     | The database path and file name             |
+| cleanup.runDelay              | 24                                            | The cleanup task delay in hours             |
+| cleanup.hoursAgo              | 120                                           | The minimum age from the data to be removed |
 
 Configuration example:
 ```
@@ -39,6 +41,12 @@ api {
 database {
     path = "./network-monitor-tool.db"
 }
+
+# Uncomment the cleanup block if you want to auto-delete the old data from the database
+#cleanup {
+#    runDelay = 24 # Hours
+#    hoursAgo = 120
+#}
 ```
 
 #### Altchain configuration
