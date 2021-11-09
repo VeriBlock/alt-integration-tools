@@ -9,7 +9,7 @@ on:
       - master
 
 jobs:
-  altchain_explorer_verifier:
+  altchain_network_monitor_tool:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
@@ -18,12 +18,12 @@ jobs:
           version: '13'
           architecture: x64
       - name: build
-        run:  cd altchain-explorer-verifier && ./gradlew build
+        run:  cd altchain-network-monitor-tool && ./gradlew build
       - name: unarchive
-        run:  cd altchain-explorer-verifier/build/distributions/ && unzip altchain-explorer-verifier-1.0-SNAPSHOT.zip
+        run:  cd altchain-network-monitor-tool/build/distributions/ && unzip altchain-network-monitor-tool-1.0-SNAPSHOT.zip
       - uses: actions/upload-artifact@v2
         if: success()
         with:
-          name: altchain-explorer-verifier-1.0-SNAPSHOT
-          path: altchain-explorer-verifier/build/distributions/altchain-explorer-verifier-1.0-SNAPSHOT
+          name: altchain-network-monitor-tool-1.0-SNAPSHOT
+          path: altchain-network-monitor-tool/build/distributions/altchain-network-monitor-tool-1.0-SNAPSHOT
           if-no-files-found: error
