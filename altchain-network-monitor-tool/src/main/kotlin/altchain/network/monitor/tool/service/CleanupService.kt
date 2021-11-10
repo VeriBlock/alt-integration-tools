@@ -6,6 +6,7 @@ import altchain.network.monitor.tool.persistence.repositories.AltDaemonMonitorRe
 import altchain.network.monitor.tool.persistence.repositories.ExplorerMonitorRepository
 import altchain.network.monitor.tool.persistence.repositories.MinerMonitorRepository
 import altchain.network.monitor.tool.persistence.repositories.NodeCoreMonitorRepository
+import altchain.network.monitor.tool.persistence.repositories.VbfiMonitorRepository
 import altchain.network.monitor.tool.util.createLogger
 import altchain.network.monitor.tool.util.createSingleThreadExecutor
 import altchain.network.monitor.tool.util.launchWithFixedDelay
@@ -19,6 +20,7 @@ private val logger = createLogger {}
 class CleanupService(
     private val cleanupConfig: CleanupConfig,
     private val abfiMonitorRepository: AbfiMonitorRepository,
+    private val vbfiMonitorRepository: VbfiMonitorRepository,
     private val altDaemonMonitorRepository: AltDaemonMonitorRepository,
     private val explorerMonitorRepository: ExplorerMonitorRepository,
     private val minerMonitorRepository: MinerMonitorRepository,
@@ -39,7 +41,8 @@ class CleanupService(
                 altDaemonMonitorRepository.deleteOldData(cleanupConfig.hoursAgo) +
                 explorerMonitorRepository.deleteOldData(cleanupConfig.hoursAgo) +
                 minerMonitorRepository.deleteOldData(cleanupConfig.hoursAgo) +
-                nodeCoreMonitorRepository.deleteOldData(cleanupConfig.hoursAgo)
+                nodeCoreMonitorRepository.deleteOldData(cleanupConfig.hoursAgo) +
+                vbfiMonitorRepository.deleteOldData(cleanupConfig.hoursAgo)
                 logger.info { "Finished the cleanup task, $rowsDeleted rows have been deleted" }
             }
         }

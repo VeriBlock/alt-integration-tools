@@ -44,8 +44,8 @@ class AbfiMonitorRepository(
             (AbfiMonitorTable.networkId.lowerCase() eq networkId.lowercase()) and
                     (AbfiMonitorTable.abfiId.lowerCase() inList abfiIds)
         }.orderBy(
-            AbfiMonitorTable.addedAt,
-            SortOrder.DESC
+            column = AbfiMonitorTable.addedAt,
+            order = SortOrder.DESC
         ).distinctBy {
             it[AbfiMonitorTable.networkId]
             it[AbfiMonitorTable.abfiId]
