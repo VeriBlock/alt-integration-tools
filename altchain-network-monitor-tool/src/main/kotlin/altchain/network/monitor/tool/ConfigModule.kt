@@ -22,6 +22,7 @@ data class NetworkConfig(
     val minPercentageHealthyAltDaemons: Int = 75,
     val minPercentageHealthyExplorers: Int = 100,
     val minPercentageHealthyAbfis: Int = 100,
+    val minPercentageHealthyVbfis: Int = 100,
     val minPercentageHealthyVpms: Int = 90,
     val maxPercentageNotHealthyVpmOperations: Int = 10,
     val minPercentageHealthyApms: Int = 80,
@@ -31,6 +32,7 @@ data class NetworkConfig(
     val nodecores: Map<String, NodecoreConfig> = emptyMap(),
     val altDaemons: Map<String, AltDaemonConfig> = emptyMap(),
     val abfis: Map<String, AbfiConfig> = emptyMap(),
+    val vbfis: Map<String, VbfiConfig> = emptyMap(),
     val explorers: Map<String, ExplorerConfig> = emptyMap()
 )
 
@@ -56,6 +58,12 @@ data class AbfiConfig(
     val apiUrl: String = "",
     val prefix: String = "",
     val auth: AuthConfig? = null
+)
+
+data class VbfiConfig(
+    val apiUrl: String = "",
+    val auth: AuthConfig? = null,
+    val explorerApiUrl: String = ""
 )
 
 data class ExplorerConfig(

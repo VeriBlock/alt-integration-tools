@@ -5,11 +5,13 @@ import altchain.network.monitor.tool.persistence.repositories.AltDaemonMonitorRe
 import altchain.network.monitor.tool.persistence.repositories.ExplorerMonitorRepository
 import altchain.network.monitor.tool.persistence.repositories.MinerMonitorRepository
 import altchain.network.monitor.tool.persistence.repositories.NodeCoreMonitorRepository
+import altchain.network.monitor.tool.persistence.repositories.VbfiMonitorRepository
 import altchain.network.monitor.tool.persistence.tables.AbfiMonitorTable
 import altchain.network.monitor.tool.persistence.tables.AltDaemonMonitorTable
 import altchain.network.monitor.tool.persistence.tables.ExplorerMonitorTable
 import altchain.network.monitor.tool.persistence.tables.MinerMonitorTable
 import altchain.network.monitor.tool.persistence.tables.NodeCoreMonitorTable
+import altchain.network.monitor.tool.persistence.tables.VbfiMonitorTable
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import org.jetbrains.exposed.sql.Database
@@ -44,6 +46,7 @@ fun persistenceModule(configuration: Configuration): Module {
                 transaction(this) {
                     SchemaUtils.createMissingTablesAndColumns(
                         AbfiMonitorTable,
+                        VbfiMonitorTable,
                         AltDaemonMonitorTable,
                         ExplorerMonitorTable,
                         MinerMonitorTable,
@@ -58,5 +61,6 @@ fun persistenceModule(configuration: Configuration): Module {
         single { ExplorerMonitorRepository(get()) }
         single { MinerMonitorRepository(get()) }
         single { NodeCoreMonitorRepository(get()) }
+        single { VbfiMonitorRepository(get()) }
     }
 }

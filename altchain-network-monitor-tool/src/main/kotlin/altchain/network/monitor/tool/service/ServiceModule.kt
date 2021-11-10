@@ -7,6 +7,7 @@ import altchain.network.monitor.tool.service.explorers.EthExplorer
 import altchain.network.monitor.tool.service.miners.ApmMiner
 import altchain.network.monitor.tool.service.miners.VpmMiner
 import altchain.network.monitor.tool.service.nodecore.NodeCoreService
+import altchain.network.monitor.tool.service.vbfi.VbfiService
 import org.koin.core.module.Module
 import org.koin.dsl.module
 import org.veriblock.core.utilities.Configuration
@@ -37,11 +38,12 @@ fun serviceModule(configuration: Configuration): Module {
 
         single { NodeCoreService() }
         single { AbfiService() }
+        single { VbfiService() }
         single { MetricsService(get(), get()) }
-        single { CleanupService(get(), get(), get(), get(), get(), get()) }
+        single { CleanupService(get(), get(), get(), get(), get(), get(), get()) }
 
         single { AltchainService(get()) }
 
-        single { MonitorService(get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get()) }
+        single { MonitorService(get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get()) }
     }
 }

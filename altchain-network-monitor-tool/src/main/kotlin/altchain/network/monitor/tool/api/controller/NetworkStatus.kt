@@ -7,6 +7,7 @@ import altchain.network.monitor.tool.persistence.repositories.AltDaemonMonitorRe
 import altchain.network.monitor.tool.persistence.repositories.ExplorerMonitorRepository
 import altchain.network.monitor.tool.persistence.repositories.MinerMonitorRepository
 import altchain.network.monitor.tool.persistence.repositories.NodeCoreMonitorRepository
+import altchain.network.monitor.tool.persistence.repositories.VbfiMonitorRepository
 import altchain.network.monitor.tool.persistence.tables.AbfiBlockInfoRecord
 import altchain.network.monitor.tool.persistence.tables.AbfiBlockRecord
 import altchain.network.monitor.tool.persistence.tables.AbfiMonitorRecord
@@ -16,6 +17,7 @@ import altchain.network.monitor.tool.persistence.tables.MetricRecord
 import altchain.network.monitor.tool.persistence.tables.MinerMonitorRecord
 import altchain.network.monitor.tool.persistence.tables.MinerType
 import altchain.network.monitor.tool.persistence.tables.NodeCoreMonitorRecord
+import altchain.network.monitor.tool.persistence.tables.VbfiMonitorRecord
 import altchain.network.monitor.tool.service.altchain.AltchainService
 import altchain.network.monitor.tool.util.now
 import altchain.network.monitor.tool.util.toLowerCase
@@ -40,6 +42,7 @@ private const val defaultNotSyncNodeMessage = "\$id is not synchronized, there a
 class NetworkStatus(
     private val networkConfigs: Map<String, NetworkConfig>,
     private val abfiMonitorRepository: AbfiMonitorRepository,
+    private val vbfiMonitorRepository: VbfiMonitorRepository,
     private val nodeCoreMonitorRepository: NodeCoreMonitorRepository,
     private val explorerMonitorRepository: ExplorerMonitorRepository,
     private val altDaemonMonitorRepository: AltDaemonMonitorRepository,
@@ -168,12 +171,38 @@ class NetworkStatus(
                     abfiId = it.key,
                     host = it.value.apiUrl,
                     prefix = it.value.prefix
-
                 )
             }
             (abfiNotPresentResponse + abfiMonitorResponse).toNetworkAbfiMonitorResponse(
                 minPercentageHealthyAbfis = network.minPercentageHealthyAbfis,
                 totalAbfis = network.abfis.size
+            )
+        } else {
+            null
+        }
+
+        val networkVbfiMonitorResponse = if (network.vbfis.isNotEmpty()) {
+            val vbfiMonitors = vbfiMonitorRepository.find(
+                networkId = networkId,
+                vbfiIds = network.vbfis.keys.toLowerCase()
+            )
+            val vbfiMonitorResponse = vbfiMonitors.map { vbfiMonitorRecord ->
+                vbfiMonitorRecord.toVbfiMonitorResponse(network.maxHealthyByTime)
+            }
+            val vbfiNotPresentResponse = network.vbfis.filterNot { entry ->
+                vbfiMonitors.any { monitor ->
+                    monitor.vbfiId == entry.key
+                }
+            }.map {
+                notPresentVbfiMonitorResponse(
+                    networkId = networkId,
+                    vbfiId = it.key,
+                    host = it.value.apiUrl
+                )
+            }
+            (vbfiNotPresentResponse + vbfiMonitorResponse).toNetworkVbfiMonitorResponse(
+                minPercentageHealthyVbfis = network.minPercentageHealthyVbfis,
+                totalVbfis = network.vbfis.size
             )
         } else {
             null
@@ -220,6 +249,7 @@ class NetworkStatus(
                 networkAltDaemonMonitorResponse?.isHealthy ?: true &&
                 networkExplorerMonitorResponse?.isHealthy ?: true &&
                 networkAbfiMonitorResponse?.isHealthy ?: true &&
+                networkVbfiMonitorResponse?.isHealthy ?: true &&
                 networkMinerMonitorResponse?.isVpmHealthy ?: true &&
                 networkMinerMonitorResponse?.isApmHealthy ?: true
 
@@ -248,6 +278,12 @@ class NetworkStatus(
             abfiMonitorResponse.isHealthy.reason
         } ?: emptyList()
 
+        val vbfiDiagnostics = networkVbfiMonitorResponse?.vbfiMonitors?.filter {
+            !it.isHealthy.isHealthy
+        }?.mapNotNull { vbfiMonitorResponse ->
+            vbfiMonitorResponse.isHealthy.reason
+        } ?: emptyList()
+
         val minerDiagnostics = networkMinerMonitorResponse?.minerMonitors?.filter {
             !it.isHealthy.isHealthy
         }?.mapNotNull { minerMonitorResponse ->
@@ -258,7 +294,7 @@ class NetworkStatus(
             networkId = networkId,
             isHealthy = HealthyStatusReportResponse(
                 isHealthy = isHealthy,
-                diagnostics = (nodeCoreDiagnostics + altDaemonDiagnostics + explorerDiagnostics + abfiDiagnostics + minerDiagnostics).ifEmpty {
+                diagnostics = (nodeCoreDiagnostics + altDaemonDiagnostics + explorerDiagnostics + abfiDiagnostics + minerDiagnostics + vbfiDiagnostics).ifEmpty {
                     null
                 }
             ),
@@ -266,6 +302,7 @@ class NetworkStatus(
             networkAltDaemonMonitor = networkAltDaemonMonitorResponse,
             networkExplorerMonitor = networkExplorerMonitorResponse,
             networkAbfiMonitor = networkAbfiMonitorResponse,
+            networkVbfiMonitor = networkVbfiMonitorResponse,
             networkMinerMonitor = networkMinerMonitorResponse
         )
         return response
@@ -409,6 +446,38 @@ fun notPresentAbfiMonitorResponse(
     )
 }
 
+fun List<VbfiMonitorResponse>.toNetworkVbfiMonitorResponse(
+    minPercentageHealthyVbfis: Int,
+    totalVbfis: Int
+): NetworkVbfiMonitorResponse {
+    val healthyCount = count { it.isHealthy.isHealthy }
+    val percentage = getHealthyPercentage(
+        count = healthyCount,
+        totalCount = totalVbfis
+    )
+    val isHealthy = percentage >= minPercentageHealthyVbfis
+    return NetworkVbfiMonitorResponse(
+        isHealthy = isHealthy,
+        vbfiMonitors = this
+    )
+}
+
+fun notPresentVbfiMonitorResponse(
+    networkId: String,
+    vbfiId: String,
+    host: String
+): VbfiMonitorResponse {
+    return VbfiMonitorResponse(
+        networkId = networkId,
+        vbfiId = vbfiId,
+        host = host,
+        isHealthy = HealthyStatusResponse(
+            isHealthy = false,
+            reason = defaultDownMessage.replace("\$id", vbfiId)
+        )
+    )
+}
+
 fun AbfiBlockRecord.toAbfiBlockInfoSummaryResponse(): AbfiBlockInfoSummaryResponse {
     return AbfiBlockInfoSummaryResponse(
        name = name,
@@ -461,6 +530,42 @@ fun AbfiMonitorRecord.toAbfiMonitorResponse(
         addedAt = addedAt
     )
 }
+
+
+fun VbfiMonitorRecord.toVbfiMonitorResponse(
+    maxHealthyByTime: Int
+): VbfiMonitorResponse {
+    val timeDifference = Duration.between(addedAt.toJavaInstant(), now().toJavaInstant()).toMinutes()
+    val isHealthyByTime = timeDifference <= maxHealthyByTime
+    val blockDifference = abs(lastExplorerBlockHeight - lastBlockHeight)
+    val isHealthyByBlocksReport = if (!isSynchronized) {
+        defaultNotSyncNodeMessage.replace("\$id", vbfiId).replace("\$blockDifference", "$blockDifference")
+            .replace("\$localHeight", "$lastBlockHeight").replace("\$networkHeight", "$lastExplorerBlockHeight")
+    } else {
+        null
+    }
+    val isHealthyByTimeReport = if (!isHealthyByTime) {
+        defaultOldDataMessage.replace("\$id", vbfiId).replace("\$timeDifference", "$timeDifference")
+    } else {
+        null
+    }
+    return VbfiMonitorResponse(
+        networkId = networkId,
+        vbfiId = vbfiId,
+        version = vbfiVersion,
+        host = host,
+        lastBlockHeight = lastBlockHeight,
+        lastExplorerBlockHeight = lastExplorerBlockHeight,
+        isHealthyByBlocks = isSynchronized,
+        isHealthyByTime = isHealthyByTime,
+        isHealthy = HealthyStatusResponse(
+            isHealthy = isSynchronized && isHealthyByTime,
+            reason = listOfNotNull(isHealthyByTimeReport, isHealthyByBlocksReport).firstOrNull()
+        ),
+        addedAt = addedAt
+    )
+}
+
 
 fun notPresentNodeCoreMonitorResponse(
     networkId: String,

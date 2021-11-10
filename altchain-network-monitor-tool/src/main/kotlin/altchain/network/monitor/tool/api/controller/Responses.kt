@@ -20,6 +20,7 @@ data class NetworkMonitorResponse(
     val networkAltDaemonMonitor: NetworkAltDaemonMonitorResponse?,
     val networkExplorerMonitor: NetworkExplorerMonitorResponse?,
     val networkAbfiMonitor: NetworkAbfiMonitorResponse?,
+    val networkVbfiMonitor: NetworkVbfiMonitorResponse?,
     val networkMinerMonitor: NetworkMinerMonitorResponse?
 )
 
@@ -186,4 +187,26 @@ data class AbfiBlockInfoResponse(
     val bitcoinFinality: Int?,
     val endorsedInHeight: Int?,
     val verifiedInHeight: Int?
+)
+
+@Response
+@Serializable
+data class NetworkVbfiMonitorResponse(
+    val isHealthy: Boolean,
+    val vbfiMonitors: List<VbfiMonitorResponse>
+)
+
+@Response
+@Serializable
+data class VbfiMonitorResponse(
+    val networkId: String,
+    val vbfiId: String,
+    val version: String = "",
+    val host: String,
+    val lastBlockHeight: Int = 0,
+    val lastExplorerBlockHeight: Int = 0,
+    val isHealthyByTime: Boolean = false,
+    val isHealthyByBlocks: Boolean = false,
+    val isHealthy: HealthyStatusResponse,
+    val addedAt: Instant = Instant.DISTANT_PAST
 )

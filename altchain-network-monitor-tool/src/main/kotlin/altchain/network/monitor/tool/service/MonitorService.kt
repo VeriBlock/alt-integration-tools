@@ -6,9 +6,11 @@ import altchain.network.monitor.tool.persistence.repositories.AltDaemonMonitorRe
 import altchain.network.monitor.tool.persistence.repositories.ExplorerMonitorRepository
 import altchain.network.monitor.tool.persistence.repositories.MinerMonitorRepository
 import altchain.network.monitor.tool.persistence.repositories.NodeCoreMonitorRepository
+import altchain.network.monitor.tool.persistence.repositories.VbfiMonitorRepository
 import altchain.network.monitor.tool.service.abfi.AbfiService
 import altchain.network.monitor.tool.service.altchain.AltchainService
 import altchain.network.monitor.tool.service.nodecore.NodeCoreService
+import altchain.network.monitor.tool.service.vbfi.VbfiService
 import altchain.network.monitor.tool.util.createLogger
 import altchain.network.monitor.tool.util.createMultiThreadExecutor
 import altchain.network.monitor.tool.util.debugWarn
@@ -24,11 +26,12 @@ private val logger = createLogger {}
 class MonitorService(
     private val nodeCoreService: NodeCoreService,
     private val abfiService: AbfiService,
-
+    private val vbfiService: VbfiService,
     private val minerMonitorRepository: MinerMonitorRepository,
     private val explorerStateRepository: ExplorerMonitorRepository,
     private val nodeCoreMonitorRepository: NodeCoreMonitorRepository,
     private val abfiMonitorRepository: AbfiMonitorRepository,
+    private val vbfiMonitorRepository: VbfiMonitorRepository,
     private val altDaemonMonitorRepository: AltDaemonMonitorRepository,
     private val altchainService: AltchainService,
     private val minerService: MinerService,
@@ -38,19 +41,22 @@ class MonitorService(
     private val monitorServiceExecutor = createMultiThreadExecutor("monitor-service-thread", 16)
     private val monitorServiceCoroutineScope = CoroutineScope(monitorServiceExecutor.asCoroutineDispatcher())
 
-    private val minerMonitorExecutor = createMultiThreadExecutor("miner-monitor-thread", 8)
+    private val minerMonitorExecutor = createMultiThreadExecutor("miner-monitor-thread", 4)
     private val minerMonitorCoroutineScope = CoroutineScope(minerMonitorExecutor.asCoroutineDispatcher())
 
-    private val nodecoreMonitorExecutor = createMultiThreadExecutor("nodecore-monitor-thread", 8)
+    private val nodecoreMonitorExecutor = createMultiThreadExecutor("nodecore-monitor-thread", 4)
     private val nodecoreMonitorCoroutineScope = CoroutineScope(nodecoreMonitorExecutor.asCoroutineDispatcher())
 
-    private val altDaemonMonitorExecutor = createMultiThreadExecutor("alt-daemon-monitor-thread", 8)
+    private val altDaemonMonitorExecutor = createMultiThreadExecutor("alt-daemon-monitor-thread", 4)
     private val altDaemonMonitorCoroutineScope = CoroutineScope(altDaemonMonitorExecutor.asCoroutineDispatcher())
 
-    private val abfirMonitorExecutor = createMultiThreadExecutor("abfi-monitor-thread", 8)
-    private val abfiMonitorCoroutineScope = CoroutineScope(abfirMonitorExecutor.asCoroutineDispatcher())
+    private val abfiMonitorExecutor = createMultiThreadExecutor("abfi-monitor-thread", 4)
+    private val abfiMonitorCoroutineScope = CoroutineScope(abfiMonitorExecutor.asCoroutineDispatcher())
 
-    private val explorerMonitorExecutor = createMultiThreadExecutor("explorer-monitor-thread", 8)
+    private val vbfiMonitorExecutor = createMultiThreadExecutor("vbfi-monitor-thread", 4)
+    private val vbfiMonitorCoroutineScope = CoroutineScope(vbfiMonitorExecutor.asCoroutineDispatcher())
+
+    private val explorerMonitorExecutor = createMultiThreadExecutor("explorer-monitor-thread", 4)
     private val explorerMonitorCoroutineScope = CoroutineScope(explorerMonitorExecutor.asCoroutineDispatcher())
 
     fun start() {
@@ -150,6 +156,29 @@ class MonitorService(
                         }
                     }
 
+                    //VBFIs
+                    networkConfig.vbfis.forEach { (vbfiKey, vbfiConfig) ->
+                        vbfiMonitorCoroutineScope.launch {
+                            try {
+                                logger.info { "($networkKey/$vbfiKey) Monitoring..." }
+                                val record = vbfiService.getVbfiMonitor(
+                                    networkId = networkKey,
+                                    vbfiId = vbfiKey,
+                                    vbfiConfig = vbfiConfig
+                                )
+                                vbfiMonitorRepository.create(
+                                    networkId = networkKey,
+                                    vbfiId = vbfiKey,
+                                    host = vbfiConfig.apiUrl,
+                                    monitor = record
+                                )
+                                logger.info { "($networkKey/$vbfiKey) Added new vbfi state" }
+                            } catch (exception: Exception) {
+                                logger.debugWarn(exception) { "($networkKey/$vbfiKey) Failed to monitor" }
+                            }
+                        }
+                    }
+
                     // Explorers
                     networkConfig.explorers.forEach { (explorerKey, explorerConfig) ->
                         explorerMonitorCoroutineScope.launch {
@@ -185,6 +214,7 @@ class MonitorService(
         nodecoreMonitorCoroutineScope.cancel()
         altDaemonMonitorCoroutineScope.cancel()
         abfiMonitorCoroutineScope.cancel()
+        vbfiMonitorCoroutineScope.cancel()
         explorerMonitorCoroutineScope.cancel()
     }
 }
