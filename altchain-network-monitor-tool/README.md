@@ -7,7 +7,8 @@ All the generated information is stored into a SQLite database so that the resul
 ### Supported Software
 The tool is capable to monitor any amount of instances of the next pieces of software:
 * VeriBlock NodeCore daemon
-* VeriBlock Altchain Block Finality Indicator (vBFI)
+* VeriBlock Altchain Bitcoin Finality Indicator (ABFI)
+* VeriBlock Bitcoin Finality Indicator (BFI)
 * [VeriBlock Altchain PoP Miner (APM)](https://github.com/VeriBlock/nodecore/tree/master/pop-miners/altchain-pop-miner)
 * [VeriBlock PoP Miner (VPM)](https://github.com/VeriBlock/nodecore/tree/master/pop-miners/veriblock-pop-miner)
 * [Any Altchain daemon supported by the VeriBlock Altchain Plugins](https://github.com/VeriBlock/nodecore/tree/master/altchain-plugins)
