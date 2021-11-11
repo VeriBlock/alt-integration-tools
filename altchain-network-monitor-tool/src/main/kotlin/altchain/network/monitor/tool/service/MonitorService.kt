@@ -36,7 +36,7 @@ class MonitorService(
     private val altchainService: AltchainService,
     private val minerService: MinerService,
     private val explorerService: ExplorerService,
-    private val netwrokConfigs: Map<String, NetworkConfig>
+    private val networkConfigs: Map<String, NetworkConfig>
 ) {
     private val monitorServiceExecutor = createMultiThreadExecutor("monitor-service-thread", 16)
     private val monitorServiceCoroutineScope = CoroutineScope(monitorServiceExecutor.asCoroutineDispatcher())
@@ -60,7 +60,7 @@ class MonitorService(
     private val explorerMonitorCoroutineScope = CoroutineScope(explorerMonitorExecutor.asCoroutineDispatcher())
 
     fun start() {
-        netwrokConfigs.entries.forEach { (networkKey, networkConfig) ->
+        networkConfigs.entries.forEach { (networkKey, networkConfig) ->
             monitorServiceCoroutineScope.launchWithFixedDelay(
                 initialDelayMillis = TimeUnit.SECONDS.toMillis(1),
                 periodMillis = TimeUnit.MINUTES.toMillis(networkConfig.checkDelay)

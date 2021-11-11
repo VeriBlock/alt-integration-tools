@@ -93,7 +93,7 @@ dependencies {
 }
 
 application.applicationName = "altchain-network-monitor-tool"
-application.mainClassName = "altchain.netwrok.monitor.tool.NetworkMonitorKt"
+application.mainClassName = "altchain.network.monitor.tool.NetworkMonitor"
 
 distributions {
     getByName("main") {

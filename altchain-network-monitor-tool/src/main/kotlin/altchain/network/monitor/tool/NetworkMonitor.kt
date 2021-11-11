@@ -1,3 +1,4 @@
+@file:JvmName("NetworkMonitor")
 package altchain.network.monitor.tool
 
 import altchain.network.monitor.tool.api.ApiService
