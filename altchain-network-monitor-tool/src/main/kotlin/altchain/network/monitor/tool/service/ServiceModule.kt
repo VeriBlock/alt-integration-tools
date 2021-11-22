@@ -37,7 +37,7 @@ fun serviceModule(configuration: Configuration): Module {
         }
 
         single { NodeCoreService() }
-        single { AbfiService() }
+        single { AbfiService(get()) }
         single { VbfiService() }
         single { MetricsService(get(), get()) }
         single { CleanupService(get(), get(), get(), get(), get(), get(), get()) }

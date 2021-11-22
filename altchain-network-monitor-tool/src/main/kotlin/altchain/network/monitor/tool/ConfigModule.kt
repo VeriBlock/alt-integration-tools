@@ -57,13 +57,16 @@ data class AltDaemonConfig(
 data class AbfiConfig(
     val apiUrl: String = "",
     val prefix: String = "",
-    val auth: AuthConfig? = null
+    val auth: AuthConfig? = null,
+    val siKey: String = "",
+    val maxBlockDifference: Int = 100
 )
 
 data class VbfiConfig(
     val apiUrl: String = "",
     val auth: AuthConfig? = null,
-    val explorerApiUrl: String = ""
+    val explorerApiUrl: String = "",
+    val maxBlockDifference: Int = 40
 )
 
 data class ExplorerConfig(

@@ -26,7 +26,7 @@ class VbfiService {
             val vbfiLastBlock = chainsDto.best.blocks.maxOf { it.height }
             val explorerLastBlock = explorerDto.lastBlock.height
             val blockDifference = abs(vbfiLastBlock - explorerLastBlock)
-            val isSynchronized = vbfiLastBlock > 0 && blockDifference < 40
+            val isSynchronized = vbfiLastBlock > 0 && blockDifference <= vbfiConfig.maxBlockDifference
 
             return VbfiMonitor(
                 vbfiVersion = "Unknown",

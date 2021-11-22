@@ -18,7 +18,10 @@ object AbfiMonitorTable : Table("abfi_monitor") {
     val host = varchar("host")
     val prefix = varchar("prefix")
     val blockInfo = bigVarchar("block_info")
+    val lastFinalizedBlockHeight = integer("last_finalized_block_height")
+    val lastNetworkBlockHeight = integer("last_network_block_height")
     val haveLastFinalizedBlockBtc = bool("have_last_finalized_block_btc")
+    val isSynchronized = bool("is_synchronized")
     val diagnostic = bigVarchar("diagnostic")
     val addedAt = timestamp("added_at")
 }
@@ -30,7 +33,10 @@ data class AbfiMonitorRecord(
     val host: String,
     val prefix: String,
     val blockInfo: AbfiBlocksRecord,
+    val lastFinalizedBlockHeight: Int,
+    val lastNetworkBlockHeight: Int,
     val haveLastFinalizedBlockBtc: Boolean,
+    val isSynchronized: Boolean,
     val diagnostic: String,
     val addedAt: Instant
 )
@@ -38,7 +44,10 @@ data class AbfiMonitorRecord(
 data class AbfiMonitor(
     val abfiVersion: String,
     val blockInfo: AbfiBlocksRecord,
+    val lastFinalizedBlockHeight: Int,
+    val lastNetworkBlockHeight: Int,
     val haveLastFinalizedBlockBtc: Boolean,
+    val isSynchronized: Boolean,
     val diagnostic: String,
     val addedAt: Instant
 )
@@ -70,7 +79,10 @@ fun ResultRow.toAbfiMonitorRecord(): AbfiMonitorRecord = AbfiMonitorRecord(
     host = this[AbfiMonitorTable.host],
     prefix = this[AbfiMonitorTable.prefix],
     blockInfo = Json.decodeFromString(this[AbfiMonitorTable.blockInfo]),
+    lastFinalizedBlockHeight = this[AbfiMonitorTable.lastFinalizedBlockHeight],
+    lastNetworkBlockHeight = this[AbfiMonitorTable.lastNetworkBlockHeight],
     haveLastFinalizedBlockBtc = this[AbfiMonitorTable.haveLastFinalizedBlockBtc],
+    isSynchronized = this[AbfiMonitorTable.isSynchronized],
     diagnostic = this[AbfiMonitorTable.diagnostic],
     addedAt = this[AbfiMonitorTable.addedAt].toKotlinInstant()
 )
