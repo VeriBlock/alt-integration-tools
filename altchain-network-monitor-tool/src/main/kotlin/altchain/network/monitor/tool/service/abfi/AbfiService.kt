@@ -5,6 +5,7 @@ import altchain.network.monitor.tool.persistence.tables.AbfiBlockInfoRecord
 import altchain.network.monitor.tool.persistence.tables.AbfiBlockRecord
 import altchain.network.monitor.tool.persistence.tables.AbfiBlocksRecord
 import altchain.network.monitor.tool.persistence.tables.AbfiMonitor
+import altchain.network.monitor.tool.service.altchain.AltchainService
 import altchain.network.monitor.tool.util.createHttpClient
 import altchain.network.monitor.tool.util.createLogger
 import altchain.network.monitor.tool.util.now
@@ -12,10 +13,13 @@ import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import kotlin.math.abs
 
 private val logger = createLogger {}
 
-class AbfiService {
+class AbfiService(
+    val altchainService: AltchainService
+) {
     private val httpClients: MutableMap<String, HttpClient> by lazy {
         HashMap()
     }
@@ -27,10 +31,19 @@ class AbfiService {
             val pingDto: PingDto = httpClient.get("${abfiConfig.apiUrl}/${abfiConfig.prefix}/ping")
             val diagnostic = Json.encodeToString(pingDto)
 
+            val lastFinalizedBlockHeight = pingDto.lastFinalizedBlockBtc?.height ?: 0
+            val lastNetworkBlockHeight = altchainService.getBlockChainInfo(abfiConfig.siKey).localHeight
+
+            val blockDifference = abs(lastFinalizedBlockHeight - lastNetworkBlockHeight)
+            val isSynchronized = lastFinalizedBlockHeight > 0 && blockDifference <= abfiConfig.maxBlockDifference
+
             return AbfiMonitor(
                 abfiVersion = pingDto.version,
                 blockInfo = pingDto.toAbfiBlocksRecord(),
-                haveLastFinalizedBlockBtc = pingDto.lastFinalizedBlockBtc != null,
+                lastFinalizedBlockHeight = lastFinalizedBlockHeight,
+                lastNetworkBlockHeight = lastNetworkBlockHeight,
+                haveLastFinalizedBlockBtc = lastFinalizedBlockHeight != 0,
+                isSynchronized = isSynchronized,
                 diagnostic = diagnostic,
                 addedAt = now()
             )

@@ -31,6 +31,8 @@ class AbfiMonitorRepository(
                 it[this.host] = host
                 it[this.prefix] = prefix
                 it[blockInfo] = Json.encodeToString(monitor.blockInfo)
+                it[lastFinalizedBlockHeight] = monitor.lastFinalizedBlockHeight
+                it[lastNetworkBlockHeight] = monitor.lastNetworkBlockHeight
                 it[haveLastFinalizedBlockBtc] = monitor.haveLastFinalizedBlockBtc
                 it[diagnostic] = monitor.diagnostic
                 it[addedAt] = monitor.addedAt.toJavaInstant()

@@ -505,11 +505,19 @@ fun AbfiMonitorRecord.toAbfiMonitorResponse(
     } else {
         null
     }
+    val blockDifference = abs(lastNetworkBlockHeight - lastFinalizedBlockHeight)
+    val isHealthyByBlocksReport = if (!isSynchronized) {
+        defaultNotSyncNodeMessage.replace("\$id", abfiId).replace("\$blockDifference", "$blockDifference")
+            .replace("\$localHeight", "$lastFinalizedBlockHeight").replace("\$networkHeight", "$lastNetworkBlockHeight")
+    } else {
+        null
+    }
     val isHealthyByTimeReport = if (!isHealthyByTime) {
         "${defaultOldDataMessage.replace("\$id", abfiId).replace("\$timeDifference", "$timeDifference")}, diagnostic: $diagnostic"
     } else {
         null
     }
+
     return AbfiMonitorResponse(
         networkId = networkId,
         abfiId = abfiId,
@@ -521,11 +529,15 @@ fun AbfiMonitorRecord.toAbfiMonitorResponse(
                 it.toAbfiBlockInfoSummaryResponse()
             }
         ),
+        lastFinalizedBlockHeight = lastFinalizedBlockHeight,
+        lastNetworkBlockHeight = lastNetworkBlockHeight,
+        blockDifference = blockDifference,
         isHealthyByTime = isHealthyByTime,
         isHealthyByLastFinalizedBlockBtc = haveLastFinalizedBlockBtc,
+        isHealthyByBlocks = isSynchronized,
         isHealthy = HealthyStatusResponse(
-            isHealthy = isHealthyByTime && haveLastFinalizedBlockBtc,
-            reason = listOfNotNull(isHealthyByTimeReport, isHealthyByLastFinalizedBlockBtcReport).firstOrNull()
+            isHealthy = isHealthyByTime && haveLastFinalizedBlockBtc && isSynchronized,
+            reason = listOfNotNull(isHealthyByTimeReport, isHealthyByLastFinalizedBlockBtcReport, isHealthyByBlocksReport).firstOrNull()
         ),
         addedAt = addedAt
     )
@@ -556,6 +568,7 @@ fun VbfiMonitorRecord.toVbfiMonitorResponse(
         host = host,
         lastBlockHeight = lastBlockHeight,
         lastExplorerBlockHeight = lastExplorerBlockHeight,
+        blockDifference = blockDifference,
         isHealthyByBlocks = isSynchronized,
         isHealthyByTime = isHealthyByTime,
         isHealthy = HealthyStatusResponse(

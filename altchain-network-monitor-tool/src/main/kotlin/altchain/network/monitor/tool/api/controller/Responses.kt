@@ -160,8 +160,12 @@ data class AbfiMonitorResponse(
     val host: String,
     val prefix: String,
     val blockInfo: AbfiBlockSummaryResponse? = null,
+    val lastFinalizedBlockHeight: Int = 0,
+    val lastNetworkBlockHeight: Int = 0,
+    val blockDifference: Int = 0,
     val isHealthyByTime: Boolean = false,
     val isHealthyByLastFinalizedBlockBtc: Boolean = false,
+    val isHealthyByBlocks: Boolean = false,
     val isHealthy: HealthyStatusResponse,
     val addedAt: Instant = Instant.DISTANT_PAST
 )
@@ -205,6 +209,7 @@ data class VbfiMonitorResponse(
     val host: String,
     val lastBlockHeight: Int = 0,
     val lastExplorerBlockHeight: Int = 0,
+    val blockDifference: Int = 0,
     val isHealthyByTime: Boolean = false,
     val isHealthyByBlocks: Boolean = false,
     val isHealthy: HealthyStatusResponse,
