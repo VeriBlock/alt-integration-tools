@@ -552,7 +552,7 @@ fun VbfiMonitorRecord.toVbfiMonitorResponse(
 
     val lastBlockDifference = abs(lastExplorerBlockHeight - lastBlockHeight)
     val isHealthyByLastBlockReport = if (!isLastBlockSynchronized) {
-        defaultNotSyncNodeMessage.replace("\$id", vbfiId).replace("\$blockDifference", "$lastBlockDifference")
+        defaultNotSyncNodeMessage.replace("\$id", "$vbfiId (last block)").replace("\$blockDifference", "$lastBlockDifference")
             .replace("\$localHeight", "$lastBlockHeight").replace("\$networkHeight", "$lastExplorerBlockHeight")
     } else {
         null
@@ -560,7 +560,7 @@ fun VbfiMonitorRecord.toVbfiMonitorResponse(
 
     val lastBlockFinalizedBtcDifference = abs(lastExplorerBlockHeight - lastBlockFinalizedBtcHeight)
     val isHealthyByLastBlockFinalizedReport = if (!isLastBlockFinalizedBtcSynchronized) {
-        defaultNotSyncNodeMessage.replace("\$id", vbfiId).replace("\$blockDifference", "$lastBlockFinalizedBtcDifference")
+        defaultNotSyncNodeMessage.replace("\$id", "$vbfiId (last finalized block)").replace("\$blockDifference", "$lastBlockFinalizedBtcDifference")
             .replace("\$localHeight", "$lastBlockFinalizedBtcHeight").replace("\$networkHeight", "$lastExplorerBlockHeight")
     } else {
         null
