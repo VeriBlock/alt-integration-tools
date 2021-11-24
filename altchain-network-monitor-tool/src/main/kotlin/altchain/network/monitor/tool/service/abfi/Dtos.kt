@@ -12,6 +12,10 @@ data class BlockSummaryDto(
 data class PingDto(
     val version: String,
     val siChainName: String,
+    val healthy: Boolean,
+    val error: String?,
+    val lastBlock: PingBlockDto?,
+    val oldestBlock: PingBlockDto?,
     val lastEndorsedBlock: PingBlockDto?,
     val oldestEndorsedBlock: PingBlockDto?,
     val lastVerifiedBlock: PingBlockDto?,

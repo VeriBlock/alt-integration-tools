@@ -66,7 +66,8 @@ data class VbfiConfig(
     val apiUrl: String = "",
     val auth: AuthConfig? = null,
     val explorerApiUrl: String = "",
-    val maxBlockDifference: Int = 40
+    val maxLastBlockDifference: Int = 5,
+    val maxLastBlockFinalizedBtcDifference: Int = 300
 )
 
 data class ExplorerConfig(

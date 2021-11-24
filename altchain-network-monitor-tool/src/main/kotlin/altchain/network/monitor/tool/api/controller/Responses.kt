@@ -208,10 +208,13 @@ data class VbfiMonitorResponse(
     val version: String = "",
     val host: String,
     val lastBlockHeight: Int = 0,
+    val lastBlockFinalizedBtcHeight: Int = 0,
     val lastExplorerBlockHeight: Int = 0,
-    val blockDifference: Int = 0,
+    val lastBlockDifference: Int = 0,
+    val lastBlockFinalizedBtcDifference: Int = 0,
     val isHealthyByTime: Boolean = false,
-    val isHealthyByBlocks: Boolean = false,
+    val isHealthyByLastBlock: Boolean = false,
+    val isHealthyByLastFinalizedBlockBtc: Boolean = false,
     val isHealthy: HealthyStatusResponse,
     val addedAt: Instant = Instant.DISTANT_PAST
 )

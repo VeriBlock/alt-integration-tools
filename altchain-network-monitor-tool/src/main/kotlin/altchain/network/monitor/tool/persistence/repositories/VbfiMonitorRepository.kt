@@ -28,8 +28,10 @@ class VbfiMonitorRepository(
                 it[vbfiVersion] = monitor.vbfiVersion
                 it[this.host] = host
                 it[lastBlockHeight] = monitor.lastBlockHeight
+                it[lastBlockFinalizedBtcHeight] = monitor.lastBlockFinalizedBtcHeight
                 it[lastExplorerBlockHeight] = monitor.lastExplorerBlockHeight
-                it[isSynchronized] = monitor.isSynchronized
+                it[isLastBlockSynchronized] = monitor.isLastBlockSynchronized
+                it[isLastBlockFinalizedBtcSynchronized] = monitor.isLastBlockFinalizedBtcSynchronized
                 it[addedAt] = monitor.addedAt.toJavaInstant()
             }
         }

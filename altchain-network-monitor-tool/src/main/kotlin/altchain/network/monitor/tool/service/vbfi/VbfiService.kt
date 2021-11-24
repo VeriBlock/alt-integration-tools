@@ -2,6 +2,7 @@ package altchain.network.monitor.tool.service.vbfi
 
 import altchain.network.monitor.tool.VbfiConfig
 import altchain.network.monitor.tool.persistence.tables.VbfiMonitor
+import altchain.network.monitor.tool.service.abfi.PingDto
 import altchain.network.monitor.tool.util.createHttpClient
 import altchain.network.monitor.tool.util.createLogger
 import altchain.network.monitor.tool.util.now
@@ -20,19 +21,26 @@ class VbfiService {
         httpClients.getOrPut("$networkId/$vbfiId") { createHttpClient(vbfiConfig.auth).also {
             logger.info { "($networkId/$vbfiId) Creating http client..." }
         } }.also { httpClient ->
-            val chainsDto: ChainsDto = httpClient.get("${vbfiConfig.apiUrl}/api/chains")
-            val explorerDto: ExplorerDto = httpClient.get(vbfiConfig.explorerApiUrl)
+            val pingDto: PingDto = httpClient.get("${vbfiConfig.apiUrl}/api/ping")
 
-            val vbfiLastBlock = chainsDto.best.blocks.maxOf { it.height }
+            val explorerDto: ExplorerDto = httpClient.get(vbfiConfig.explorerApiUrl)
             val explorerLastBlock = explorerDto.lastBlock.height
-            val blockDifference = abs(vbfiLastBlock - explorerLastBlock)
-            val isSynchronized = vbfiLastBlock > 0 && blockDifference <= vbfiConfig.maxBlockDifference
+
+            val lastBlock = pingDto.lastBlock?.height ?: 0
+            val lastBlockDifference = abs(lastBlock - explorerLastBlock)
+            val isLastBlockSynchronized = lastBlock > 0 && lastBlockDifference <= vbfiConfig.maxLastBlockDifference
+
+            val lastBlockFinalizedBtc = pingDto.lastFinalizedBlockBtc?.height ?: 0
+            val lastBlockFinalizedBtcDifference = abs(lastBlockFinalizedBtc - explorerLastBlock)
+            val isLastBlockFinalizedBtcSynchronized = lastBlockFinalizedBtc > 0 && lastBlockFinalizedBtcDifference <= vbfiConfig.maxLastBlockFinalizedBtcDifference
 
             return VbfiMonitor(
-                vbfiVersion = "Unknown",
-                lastBlockHeight = vbfiLastBlock,
+                vbfiVersion = pingDto.version,
+                lastBlockHeight = lastBlock,
+                lastBlockFinalizedBtcHeight = lastBlockFinalizedBtc,
                 lastExplorerBlockHeight = explorerLastBlock,
-                isSynchronized = isSynchronized,
+                isLastBlockSynchronized = isLastBlockSynchronized,
+                isLastBlockFinalizedBtcSynchronized = isLastBlockFinalizedBtcSynchronized,
                 addedAt = now()
             )
         }
