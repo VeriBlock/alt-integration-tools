@@ -549,13 +549,23 @@ fun VbfiMonitorRecord.toVbfiMonitorResponse(
 ): VbfiMonitorResponse {
     val timeDifference = Duration.between(addedAt.toJavaInstant(), now().toJavaInstant()).toMinutes()
     val isHealthyByTime = timeDifference <= maxHealthyByTime
-    val blockDifference = abs(lastExplorerBlockHeight - lastBlockHeight)
-    val isHealthyByBlocksReport = if (!isSynchronized) {
-        defaultNotSyncNodeMessage.replace("\$id", vbfiId).replace("\$blockDifference", "$blockDifference")
+
+    val lastBlockDifference = abs(lastExplorerBlockHeight - lastBlockHeight)
+    val isHealthyByLastBlockReport = if (!isLastBlockSynchronized) {
+        defaultNotSyncNodeMessage.replace("\$id", vbfiId).replace("\$blockDifference", "$lastBlockDifference")
             .replace("\$localHeight", "$lastBlockHeight").replace("\$networkHeight", "$lastExplorerBlockHeight")
     } else {
         null
     }
+
+    val lastBlockFinalizedBtcDifference = abs(lastExplorerBlockHeight - lastBlockFinalizedBtcHeight)
+    val isHealthyByLastBlockFinalizedReport = if (!isLastBlockFinalizedBtcSynchronized) {
+        defaultNotSyncNodeMessage.replace("\$id", vbfiId).replace("\$blockDifference", "$lastBlockFinalizedBtcDifference")
+            .replace("\$localHeight", "$lastBlockFinalizedBtcHeight").replace("\$networkHeight", "$lastExplorerBlockHeight")
+    } else {
+        null
+    }
+
     val isHealthyByTimeReport = if (!isHealthyByTime) {
         defaultOldDataMessage.replace("\$id", vbfiId).replace("\$timeDifference", "$timeDifference")
     } else {
@@ -567,13 +577,16 @@ fun VbfiMonitorRecord.toVbfiMonitorResponse(
         version = vbfiVersion,
         host = host,
         lastBlockHeight = lastBlockHeight,
+        lastBlockFinalizedBtcHeight = lastBlockFinalizedBtcHeight,
         lastExplorerBlockHeight = lastExplorerBlockHeight,
-        blockDifference = blockDifference,
-        isHealthyByBlocks = isSynchronized,
+        lastBlockDifference = lastBlockDifference,
+        lastBlockFinalizedBtcDifference = lastBlockFinalizedBtcDifference,
+        isHealthyByLastBlock = isLastBlockSynchronized,
+        isHealthyByLastFinalizedBlockBtc = isLastBlockFinalizedBtcSynchronized,
         isHealthyByTime = isHealthyByTime,
         isHealthy = HealthyStatusResponse(
-            isHealthy = isSynchronized && isHealthyByTime,
-            reason = listOfNotNull(isHealthyByTimeReport, isHealthyByBlocksReport).firstOrNull()
+            isHealthy = isLastBlockSynchronized && isLastBlockFinalizedBtcSynchronized && isHealthyByTime,
+            reason = listOfNotNull(isHealthyByTimeReport, isHealthyByLastBlockReport, isHealthyByLastBlockFinalizedReport).firstOrNull()
         ),
         addedAt = addedAt
     )
