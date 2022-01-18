@@ -65,9 +65,11 @@ class VpmMiner(
             val isMining = if (latestRecords.isEmpty()) {
                 startedOperationCount > 0
             } else {
+                val minStartedOperationCount = latestRecords.minOf { it.startedOperationCount }
+                val maxStartedOperationCount = latestRecords.maxOf { it.startedOperationCount }
                 latestRecords.any {
                     startedOperationCount > it.startedOperationCount
-                }
+                } || maxStartedOperationCount > minStartedOperationCount
             }
 
             return MinerMonitor(
