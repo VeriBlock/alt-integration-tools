@@ -34,6 +34,7 @@ class AbfiMonitorRepository(
                 it[lastFinalizedBlockHeight] = monitor.lastFinalizedBlockHeight
                 it[lastNetworkBlockHeight] = monitor.lastNetworkBlockHeight
                 it[haveLastFinalizedBlockBtc] = monitor.haveLastFinalizedBlockBtc
+                it[isSynchronized] = monitor.isSynchronized
                 it[diagnostic] = monitor.diagnostic
                 it[addedAt] = monitor.addedAt.toJavaInstant()
             }
