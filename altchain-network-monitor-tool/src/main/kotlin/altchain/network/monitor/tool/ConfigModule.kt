@@ -40,7 +40,8 @@ data class MinerConfig(
     val apiUrl: String = "",
     val type: MinerType = MinerType.VPM,
     val altchainKey: String? = null,
-    val auth: AuthConfig? = null
+    val auth: AuthConfig? = null,
+    val compareLatestRecordCount: Int = 2
 )
 
 data class NodecoreConfig(

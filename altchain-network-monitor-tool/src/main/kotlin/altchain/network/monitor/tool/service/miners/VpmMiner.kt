@@ -53,18 +53,21 @@ class VpmMiner(
             val failedOperationCount = minerMetrics.extractMetricIntValue(MetricType.FAILED_OPERATIONS)
             val uptimeSeconds = minerMetrics.extractMetricIntValue(MetricType.UPTIME_SECONDS)
 
-            val startDate = now().minus(Duration.Companion.seconds(uptimeSeconds))
+            val startDate = now().minus(Duration.seconds(uptimeSeconds))
             val latestRecords = minerMonitorRepository.findLatests(
                 networkId = networkId,
                 type = minerConfig.type,
                 minerId = minerId,
-                startDate = startDate
+                startDate = startDate,
+                limit = minerConfig.compareLatestRecordCount
             )
 
             val isMining = if (latestRecords.isEmpty()) {
                 startedOperationCount > 0
             } else {
-                latestRecords.any { startedOperationCount > it.startedOperationCount }
+                latestRecords.any {
+                    startedOperationCount > it.startedOperationCount
+                }
             }
 
             return MinerMonitor(

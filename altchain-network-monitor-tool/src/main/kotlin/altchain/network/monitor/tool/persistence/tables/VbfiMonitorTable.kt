@@ -5,7 +5,7 @@ import kotlinx.datetime.Instant
 import kotlinx.datetime.toKotlinInstant
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.Table
-import org.jetbrains.exposed.sql.`java-time`.timestamp
+import org.jetbrains.exposed.sql.javatime.timestamp
 
 object VbfiMonitorTable : Table("vbfi_monitor") {
     val networkId = varchar("network_id")
