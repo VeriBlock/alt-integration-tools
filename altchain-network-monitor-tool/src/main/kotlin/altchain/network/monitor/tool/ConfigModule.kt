@@ -41,7 +41,8 @@ data class MinerConfig(
     val type: MinerType = MinerType.VPM,
     val altchainKey: String? = null,
     val auth: AuthConfig? = null,
-    val compareLatestRecordCount: Int = 2
+    val compareLatestRecordCount: Int = 2,
+    val verifyIsMining: Boolean = true
 )
 
 data class NodecoreConfig(

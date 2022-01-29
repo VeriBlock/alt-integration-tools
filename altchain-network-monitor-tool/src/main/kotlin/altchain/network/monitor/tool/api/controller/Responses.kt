@@ -43,6 +43,7 @@ data class MinerMonitorResponse(
     val startedOperationCount: Int = 0,
     val completedOperationCount: Int = 0,
     val failedOperationCount: Int = 0,
+    val verifyIsMining: Boolean = false,
     val isMining: Boolean = false,
     val isHealthyByTime: Boolean = false,
     val isHealthyByOperations: Boolean = false,

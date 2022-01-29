@@ -220,7 +220,8 @@ class NetworkStatus(
                         network.maxPercentageNotHealthyVpmOperations
                     } else {
                         network.maxPercentageNotHealthyApmOperations
-                    }
+                    },
+                    verifyIsMining = network.miners[minerMonitorRecord.minerId]?.verifyIsMining ?: false
                 )
             }
             val minerNotPresentResponse = network.miners.filterNot { entry ->
@@ -329,7 +330,8 @@ fun notPresentMinerMonitorResponse(
 
 fun MinerMonitorRecord.toMinerMonitorResponse(
     maxHealthyByTime: Int,
-    operationsThreshold: Int
+    operationsThreshold: Int,
+    verifyIsMining: Boolean
 ) : MinerMonitorResponse {
     val timeDifference = Duration.between(addedAt.toJavaInstant(), now().toJavaInstant()).toMinutes()
     val isHealthyByTime = timeDifference <= maxHealthyByTime
@@ -364,11 +366,12 @@ fun MinerMonitorRecord.toMinerMonitorResponse(
         startedOperationCount = startedOperationCount,
         completedOperationCount = completedOperationCount,
         failedOperationCount = failedOperationCount,
+        verifyIsMining = verifyIsMining,
         isMining = isMining,
         isHealthyByTime = isHealthyByTime,
         isHealthyByOperations = isHealthyByOperations,
         isHealthy = HealthyStatusResponse(
-            isHealthy = isHealthyByTime && isHealthyByOperations && isMining,
+            isHealthy = isHealthyByTime && isHealthyByOperations && ((verifyIsMining && isMining) || (!isMining && !verifyIsMining)),
             reason = listOfNotNull(isHealthyByTimeReport, isHealthyByMining, isHealthyByOperationsReport).firstOrNull()
         ),
         metrics = metrics.metrics.map {
