@@ -9,7 +9,7 @@ import org.jetbrains.exposed.sql.javatime.timestamp
 
 object AltDaemonMonitorTable : Table("alt_daemon_monitor") {
     val networkId = varchar("network_id")
-    val altDaemonId = varchar("alt_daemon_id")
+    val id = varchar("id")
     val host = varchar("host")
     val localHeight = integer("local_height")
     val networkHeight = integer("network_height")
@@ -19,7 +19,7 @@ object AltDaemonMonitorTable : Table("alt_daemon_monitor") {
 
 data class AltDaemonMonitorRecord(
     val networkId: String,
-    val altDaemonId: String,
+    val id: String,
     val host: String,
     val localHeight: Int,
     val networkHeight: Int,
@@ -37,7 +37,7 @@ data class AltDaemonMonitor(
 
 fun ResultRow.toAltDaemonMonitorRecord(): AltDaemonMonitorRecord = AltDaemonMonitorRecord(
     this[AltDaemonMonitorTable.networkId],
-    this[AltDaemonMonitorTable.altDaemonId],
+    this[AltDaemonMonitorTable.id],
     this[AltDaemonMonitorTable.host],
     this[AltDaemonMonitorTable.localHeight],
     this[AltDaemonMonitorTable.networkHeight],

@@ -9,8 +9,8 @@ import org.jetbrains.exposed.sql.javatime.timestamp
 
 object VbfiMonitorTable : Table("vbfi_monitor") {
     val networkId = varchar("network_id")
-    val vbfiId = varchar("vbfi_id")
-    val vbfiVersion = varchar("vbfi_version")
+    val id = varchar("id")
+    val version = varchar("version")
     val host = varchar("host")
     val lastBlockHeight = integer("last_block_height")
     val lastBlockFinalizedBtcHeight = integer("last_block_finalized_btc_height")
@@ -22,8 +22,8 @@ object VbfiMonitorTable : Table("vbfi_monitor") {
 
 data class VbfiMonitorRecord(
     val networkId: String,
-    val vbfiId: String,
-    val vbfiVersion: String,
+    val id: String,
+    val version: String,
     val host: String,
     val lastBlockHeight: Int,
     val lastBlockFinalizedBtcHeight: Int,
@@ -45,8 +45,8 @@ data class VbfiMonitor(
 
 fun ResultRow.toVbfiMonitorRecord(): VbfiMonitorRecord = VbfiMonitorRecord(
     networkId = this[VbfiMonitorTable.networkId],
-    vbfiId = this[VbfiMonitorTable.vbfiId],
-    vbfiVersion = this[VbfiMonitorTable.vbfiVersion],
+    id = this[VbfiMonitorTable.id],
+    version = this[VbfiMonitorTable.version],
     host = this[VbfiMonitorTable.host],
     lastBlockHeight = this[VbfiMonitorTable.lastBlockHeight],
     lastBlockFinalizedBtcHeight = this[VbfiMonitorTable.lastBlockFinalizedBtcHeight],

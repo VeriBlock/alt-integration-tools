@@ -21,6 +21,13 @@ val MINER_METRICS = mapOf(
     MetricType.STARTED_OPERATIONS to "pop_miner_operations_total{action=\"started\",}"
 )
 
+val POP_SUBSIDIES_METRICS = mapOf(
+    MetricType.UPTIME_SECONDS to "process_uptime_seconds",
+    MetricType.COMPLETED_OPERATIONS to "pop_miner_operations_total{action=\"completed\",}",
+    MetricType.FAILED_OPERATIONS to "pop_miner_operations_total{action=\"failed\",}",
+    MetricType.STARTED_OPERATIONS to "pop_miner_operations_total{action=\"started\",}"
+)
+
 enum class MetricType {
     // General
     UPTIME_SECONDS,

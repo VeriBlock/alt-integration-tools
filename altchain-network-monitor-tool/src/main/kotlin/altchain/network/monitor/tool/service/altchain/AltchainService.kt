@@ -24,7 +24,7 @@ class AltchainService(
         }
     }
 
-    suspend fun getBlockChainInfo(pluginKey: String): AltDaemonMonitor  {
+    suspend fun getMonitor(pluginKey: String): AltDaemonMonitor  {
         return getPluginByKey(pluginKey)?.let { securityInheritingChain ->
             val stateInfo = securityInheritingChain.getBlockChainInfo()
             if (stateInfo == defaultStateInfo) {

@@ -12,7 +12,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlTableCell
 
 interface Explorer {
     val type: ExplorerType
-    suspend fun getExplorerState(networkId: String, explorerId: String, explorerConfig: ExplorerConfig): ExplorerMonitor
+    suspend fun getMonitor(networkId: String, id: String, config: ExplorerConfig): ExplorerMonitor
 }
 
 data class BlockInfo(

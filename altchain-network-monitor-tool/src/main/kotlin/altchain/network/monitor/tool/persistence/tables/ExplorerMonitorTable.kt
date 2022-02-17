@@ -10,7 +10,7 @@ import org.jetbrains.exposed.sql.javatime.timestamp
 
 object ExplorerMonitorTable : Table("explorer_monitor") {
     val networkId = varchar("network_id")
-    val explorerId = varchar("explorer_id")
+    val id = varchar("id")
     val host = varchar("host")
     val blockCount = integer("block_count")
     val atvCount = integer("atv_count")
@@ -24,7 +24,7 @@ object ExplorerMonitorTable : Table("explorer_monitor") {
 
 data class ExplorerMonitorRecord(
     val networkId: String,
-    val explorerId: String,
+    val id: String,
     val host: String,
     val blockCount: Int,
     val atvCount: Int,
@@ -49,7 +49,7 @@ data class ExplorerMonitor(
 
 fun ResultRow.toExplorerMonitorRecord(): ExplorerMonitorRecord = ExplorerMonitorRecord(
     this[ExplorerMonitorTable.networkId],
-    this[ExplorerMonitorTable.explorerId],
+    this[ExplorerMonitorTable.id],
     this[ExplorerMonitorTable.host],
     this[ExplorerMonitorTable.blockCount],
     this[ExplorerMonitorTable.atvCount],

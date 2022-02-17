@@ -20,7 +20,7 @@ fun apiModule(configuration: Configuration): Module {
 
     return module {
         single { apiConfig }
-        single { NetworkStatus(get(), get(), get(), get(), get(), get(), get(), get()) }
+        single { NetworkStatus(get(), get(), get(), get(), get(), get(), get(), get(), get()) }
 
         single {
             ApiService(

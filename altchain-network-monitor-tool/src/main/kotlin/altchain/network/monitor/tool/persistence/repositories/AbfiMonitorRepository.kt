@@ -22,12 +22,12 @@ import kotlin.time.ExperimentalTime
 class AbfiMonitorRepository(
     private val database: Database
 ) {
-    fun create(networkId: String, abfiId: String, host: String, prefix: String, monitor: AbfiMonitor) {
+    fun create(networkId: String, id: String, host: String, prefix: String, monitor: AbfiMonitor) {
         transaction(database) {
             AbfiMonitorTable.insert {
                 it[this.networkId] = networkId
-                it[this.abfiId] = abfiId
-                it[abfiVersion] = monitor.abfiVersion
+                it[this.id] = id
+                it[version] = monitor.abfiVersion
                 it[this.host] = host
                 it[this.prefix] = prefix
                 it[blockInfo] = Json.encodeToString(monitor.blockInfo)
@@ -42,16 +42,16 @@ class AbfiMonitorRepository(
     }
 
     @OptIn(ExperimentalTime::class)
-    fun find(networkId: String, abfiIds: Set<String>): List<AbfiMonitorRecord> = transaction(database) {
+    fun find(networkId: String, ids: Set<String>): List<AbfiMonitorRecord> = transaction(database) {
         AbfiMonitorTable.select {
             (AbfiMonitorTable.networkId.lowerCase() eq networkId.lowercase()) and
-                    (AbfiMonitorTable.abfiId.lowerCase() inList abfiIds)
+                    (AbfiMonitorTable.id.lowerCase() inList ids)
         }.orderBy(
             column = AbfiMonitorTable.addedAt,
             order = SortOrder.DESC
         ).distinctBy {
             it[AbfiMonitorTable.networkId]
-            it[AbfiMonitorTable.abfiId]
+            it[AbfiMonitorTable.id]
         }.map {
             it.toAbfiMonitorRecord()
         }

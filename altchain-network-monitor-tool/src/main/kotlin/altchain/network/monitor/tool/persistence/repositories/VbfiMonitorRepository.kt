@@ -20,12 +20,12 @@ import kotlin.time.ExperimentalTime
 class VbfiMonitorRepository(
     private val database: Database
 ) {
-    fun create(networkId: String, vbfiId: String, host: String, monitor: VbfiMonitor) {
+    fun create(networkId: String, id: String, host: String, monitor: VbfiMonitor) {
         transaction(database) {
             VbfiMonitorTable.insert {
                 it[this.networkId] = networkId
-                it[this.vbfiId] = vbfiId
-                it[vbfiVersion] = monitor.vbfiVersion
+                it[this.id] = id
+                it[version] = monitor.vbfiVersion
                 it[this.host] = host
                 it[lastBlockHeight] = monitor.lastBlockHeight
                 it[lastBlockFinalizedBtcHeight] = monitor.lastBlockFinalizedBtcHeight
@@ -37,16 +37,16 @@ class VbfiMonitorRepository(
         }
     }
 
-    fun find(networkId: String, vbfiIds: Set<String>): List<VbfiMonitorRecord> = transaction(database) {
+    fun find(networkId: String, ids: Set<String>): List<VbfiMonitorRecord> = transaction(database) {
         VbfiMonitorTable.select {
             (VbfiMonitorTable.networkId.lowerCase() eq networkId.lowercase()) and
-                    (VbfiMonitorTable.vbfiId.lowerCase() inList vbfiIds)
+                    (VbfiMonitorTable.id.lowerCase() inList ids)
         }.orderBy(
             column = VbfiMonitorTable.addedAt,
             order = SortOrder.DESC
         ).distinctBy {
             it[VbfiMonitorTable.networkId]
-            it[VbfiMonitorTable.vbfiId]
+            it[VbfiMonitorTable.id]
         }.map {
             it.toVbfiMonitorRecord()
         }

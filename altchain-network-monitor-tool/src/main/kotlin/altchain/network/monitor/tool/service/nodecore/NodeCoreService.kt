@@ -27,11 +27,11 @@ class NodeCoreService {
         HashMap()
     }
 
-    suspend fun getNodeCoreMonitor(networkId: String, nodecoreId: String, nodeCoreConfig: NodecoreConfig): NodeCoreMonitor {
-        httpClients.getOrPut("$networkId/$nodecoreId") { createHttpClient().also {
-            logger.info { "($networkId/$nodecoreId) Creating http client..." }
+    suspend fun getMonitor(networkId: String, id: String, config: NodecoreConfig): NodeCoreMonitor {
+        httpClients.getOrPut("$networkId/$id") { createHttpClient().also {
+            logger.info { "($networkId/$id) Creating http client..." }
         } }.also { httpClient ->
-            val response: RpcResponse = httpClient.post("http://${nodeCoreConfig.host}:${nodeCoreConfig.port}/api") {
+            val response: RpcResponse = httpClient.post("http://${config.host}:${config.port}/api") {
                 // Since jsonBody is a string, we have to specify it is Json content type
                 body = TextContent("""{"jsonrpc": "2.0", "method": "getstateinfo", "params": {}, "id": 1}""", contentType = ContentType.Application.Json)
             }
@@ -41,7 +41,7 @@ class NodeCoreService {
             val isSynchronized = nodeCoreState.networkHeight > 0 && blockDifference < 4
 
             return NodeCoreMonitor(
-                nodecoreVersion = nodeCoreState.programVersion,
+                version = nodeCoreState.programVersion,
                 localHeight = nodeCoreState.localBlockchainHeight,
                 networkHeight = nodeCoreState.networkHeight,
                 isSynchronized = isSynchronized,

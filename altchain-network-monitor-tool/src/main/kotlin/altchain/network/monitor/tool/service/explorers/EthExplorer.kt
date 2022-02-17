@@ -19,20 +19,20 @@ class EthExplorer : Explorer {
         HashMap()
     }
 
-    override suspend fun getExplorerState(networkId: String, explorerId: String, explorerConfig: ExplorerConfig): ExplorerMonitor {
-        httpClients.getOrPut("$networkId/$explorerId") { WebClient(BrowserVersion.FIREFOX_78).also { webClient ->
-            webClient.addDefaultOptions(explorerConfig.auth)
+    override suspend fun getMonitor(networkId: String, id: String, config: ExplorerConfig): ExplorerMonitor {
+        httpClients.getOrPut("$networkId/$id") { WebClient(BrowserVersion.FIREFOX_78).also { webClient ->
+            webClient.addDefaultOptions(config.auth)
             webClient.options.isJavaScriptEnabled = true
-            logger.info { "($networkId/$explorerId) Creating http client..." }
+            logger.info { "($networkId/$id) Creating http client..." }
         } }.also { webClient ->
             val builtEthExplorerUrl = when {
-                explorerConfig.url.contains("/#/?pagesize=") -> explorerConfig.url
-                explorerConfig.url.endsWith("/#/") -> "${explorerConfig.url}?pagesize=${explorerConfig.blockCount}"
-                else -> "${explorerConfig.url}/#/?pagesize=${explorerConfig.blockCount}"
+                config.url.contains("/#/?pagesize=") -> config.url
+                config.url.endsWith("/#/") -> "${config.url}?pagesize=${config.blockCount}"
+                else -> "${config.url}/#/?pagesize=${config.blockCount}"
             }
 
             val ethExplorerPage = webClient.getPage<HtmlPage>(builtEthExplorerUrl)
-            webClient.waitForBackgroundJavaScript((explorerConfig.loadDelay * 1000).toLong())
+            webClient.waitForBackgroundJavaScript((config.loadDelay * 1000).toLong())
             if (!ethExplorerPage.asNormalizedText().contains("Etherparty", true)) {
                 error("$builtEthExplorerUrl is not a valid ETH explorer")
             }
@@ -60,7 +60,7 @@ class EthExplorer : Explorer {
                 )
             }.toSet()
 
-            return blockInfo.toExplorerMonitor(explorerConfig)
+            return blockInfo.toExplorerMonitor(config)
         }
     }
 }

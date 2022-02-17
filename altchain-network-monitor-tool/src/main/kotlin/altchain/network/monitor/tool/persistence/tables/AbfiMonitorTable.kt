@@ -13,8 +13,8 @@ import org.jetbrains.exposed.sql.javatime.timestamp
 
 object AbfiMonitorTable : Table("abfi_monitor") {
     val networkId = varchar("network_id")
-    val abfiId = varchar("abfi_id")
-    val abfiVersion = varchar("abfi_version")
+    val id = varchar("id")
+    val version = varchar("version")
     val host = varchar("host")
     val prefix = varchar("prefix")
     val blockInfo = bigVarchar("block_info")
@@ -74,8 +74,8 @@ data class AbfiBlockInfoRecord(
 
 fun ResultRow.toAbfiMonitorRecord(): AbfiMonitorRecord = AbfiMonitorRecord(
     networkId = this[AbfiMonitorTable.networkId],
-    abfiId = this[AbfiMonitorTable.abfiId],
-    abfiVersion = this[AbfiMonitorTable.abfiVersion],
+    abfiId = this[AbfiMonitorTable.id],
+    abfiVersion = this[AbfiMonitorTable.version],
     host = this[AbfiMonitorTable.host],
     prefix = this[AbfiMonitorTable.prefix],
     blockInfo = Json.decodeFromString(this[AbfiMonitorTable.blockInfo]),

@@ -82,7 +82,7 @@ class MetricsService(
                         value = response.networkMinerMonitor?.isApmHealthy.toInt()
                     )
                     networkConfig.nodecores.keys.forEach { id ->
-                        val nodeCoreMonitorResponse = response.networkNodeCoreMonitor?.nodeCoreMonitors?.find { it.nodecoreId == id }
+                        val nodeCoreMonitorResponse = response.networkNodeCoreMonitor?.monitors?.find { it.id == id }
                         Metrics.updateGauge(
                             systemName = "nodecore",
                             networkName = networkId,
@@ -113,7 +113,7 @@ class MetricsService(
                         )
                     }
                     networkConfig.altDaemons.keys.forEach { id ->
-                        val altDaemonMonitorResponse = response.networkAltDaemonMonitor?.altDaemonMonitors?.find { it.altDaemonId == id }
+                        val altDaemonMonitorResponse = response.networkAltDaemonMonitor?.monitors?.find { it.altDaemonId == id }
                         Metrics.updateGauge(
                             systemName = "altdaemon",
                             networkName = networkId,
@@ -144,7 +144,7 @@ class MetricsService(
                         )
                     }
                     networkConfig.explorers.keys.forEach { id ->
-                        val explorerMonitorResponse = response.networkExplorerMonitor?.explorerMonitors?.find { it.explorerId == id }
+                        val explorerMonitorResponse = response.networkExplorerMonitor?.monitors?.find { it.explorerId == id }
                         Metrics.updateGauge(
                             systemName = "explorer",
                             networkName = networkId,
@@ -175,8 +175,8 @@ class MetricsService(
                         )
                     }
                     networkConfig.miners.forEach { (id, minerConfig) ->
-                        val minerMonitorResponse = response.networkMinerMonitor?.minerMonitors?.find {
-                            it.minerId == id && it.minerType == minerConfig.type
+                        val minerMonitorResponse = response.networkMinerMonitor?.monitors?.find {
+                            it.id == id && it.type == minerConfig.type
                         }
                         Metrics.updateGauge(
                             systemName = "miner",
@@ -212,8 +212,8 @@ class MetricsService(
                         )
                     }
                     networkConfig.abfis.keys.forEach { id ->
-                        val abfi = response.networkAbfiMonitor?.abfiMonitors?.find {
-                            it.abfiId == id
+                        val abfi = response.networkAbfiMonitor?.monitors?.find {
+                            it.id == id
                         }
                         Metrics.updateGauge(
                             systemName = "abfi",

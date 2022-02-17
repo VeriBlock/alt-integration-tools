@@ -23,6 +23,7 @@ data class NetworkConfig(
     val minPercentageHealthyExplorers: Int = 100,
     val minPercentageHealthyAbfis: Int = 100,
     val minPercentageHealthyVbfis: Int = 100,
+    val minPercentageHealthyPopSubsidies: Int = 100,
     val minPercentageHealthyVpms: Int = 90,
     val maxPercentageNotHealthyVpmOperations: Int = 10,
     val minPercentageHealthyApms: Int = 80,
@@ -33,7 +34,8 @@ data class NetworkConfig(
     val altDaemons: Map<String, AltDaemonConfig> = emptyMap(),
     val abfis: Map<String, AbfiConfig> = emptyMap(),
     val vbfis: Map<String, VbfiConfig> = emptyMap(),
-    val explorers: Map<String, ExplorerConfig> = emptyMap()
+    val explorers: Map<String, ExplorerConfig> = emptyMap(),
+    val popSubsidies: Map<String, PopSubsidiesConfig> = emptyMap()
 )
 
 data class MinerConfig(
@@ -78,6 +80,11 @@ data class ExplorerConfig(
     val loadDelay: Int = 40,
     val checkDelay: Long = 10,
     val type: ExplorerType = ExplorerType.BTC,
+    val auth: AuthConfig? = null
+)
+
+data class PopSubsidiesConfig(
+    val apiUrl: String = "",
     val auth: AuthConfig? = null
 )
 

@@ -7,8 +7,8 @@ import altchain.network.monitor.tool.service.miners.Miner
 class MinerService(
     private val miners: Set<Miner>
 ) {
-    suspend fun getMinerMonitor(networkId: String, minerId: String, minerConfig: MinerConfig): MinerMonitor = miners.firstOrNull {
-        it.type == minerConfig.type
-    }?.getMinerMonitor(networkId, minerId, minerConfig)
-        ?: error("${minerConfig.type} miner is not implemented yet")
+    suspend fun getMinerMonitor(networkId: String, id: String, config: MinerConfig): MinerMonitor = miners.firstOrNull {
+        it.type == config.type
+    }?.getMonitor(networkId, id, config)
+        ?: error("${config.type} miner is not implemented yet")
 }

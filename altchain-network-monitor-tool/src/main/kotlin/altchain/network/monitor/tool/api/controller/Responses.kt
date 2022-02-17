@@ -21,7 +21,30 @@ data class NetworkMonitorResponse(
     val networkExplorerMonitor: NetworkExplorerMonitorResponse?,
     val networkAbfiMonitor: NetworkAbfiMonitorResponse?,
     val networkVbfiMonitor: NetworkVbfiMonitorResponse?,
-    val networkMinerMonitor: NetworkMinerMonitorResponse?
+    val networkMinerMonitor: NetworkMinerMonitorResponse?,
+    val networkPopSubsidiesMonitor: NetworkPopSubsidiesMonitorResponse?
+)
+
+@Response
+@Serializable
+data class NetworkPopSubsidiesMonitorResponse(
+    val isHealthy: Boolean,
+    val monitors: List<PopSubsidiesMonitorResponse>
+)
+
+@Response
+@Serializable
+data class PopSubsidiesMonitorResponse(
+    val networkId: String,
+    val id: String,
+    val version: String = "",
+    val host: String,
+    val startedOperationCount: Int = 0,
+    val completedOperationCount: Int = 0,
+    val failedOperationCount: Int = 0,
+    val isHealthyByTime: Boolean = false,
+    val isHealthy: HealthyStatusResponse,
+    val addedAt: Instant = Instant.DISTANT_PAST
 )
 
 @Response
@@ -29,17 +52,17 @@ data class NetworkMonitorResponse(
 data class NetworkMinerMonitorResponse(
     val isVpmHealthy: Boolean? = null,
     val isApmHealthy: Boolean? = null,
-    val minerMonitors: List<MinerMonitorResponse>
+    val monitors: List<MinerMonitorResponse>
 )
 
 @Response
 @Serializable
 data class MinerMonitorResponse(
     val networkId: String,
-    val minerId: String,
-    val minerVersion: String = "",
+    val id: String,
+    val version: String = "",
     val host: String,
-    val minerType: MinerType,
+    val type: MinerType,
     val startedOperationCount: Int = 0,
     val completedOperationCount: Int = 0,
     val failedOperationCount: Int = 0,
@@ -64,15 +87,15 @@ data class MetricResponse(
 @Serializable
 data class NetworkNodeCoreMonitorResponse(
     val isHealthy: Boolean,
-    val nodeCoreMonitors: List<NodeCoreMonitorResponse>
+    val monitors: List<NodeCoreMonitorResponse>
 )
 
 @Response
 @Serializable
 data class NodeCoreMonitorResponse(
     val networkId: String,
-    val nodecoreId: String,
-    val nodecoreVersion: String = "",
+    val id: String,
+    val version: String = "",
     val host: String,
     val localHeight: Int = 0,
     val networkHeight: Int = 0,
@@ -101,7 +124,7 @@ data class HealthyStatusReportResponse(
 @Serializable
 data class NetworkAltDaemonMonitorResponse(
     val isHealthy: Boolean,
-    val altDaemonMonitors: List<AltDaemonMonitorResponse>
+    val monitors: List<AltDaemonMonitorResponse>
 )
 
 @Response
@@ -123,7 +146,7 @@ data class AltDaemonMonitorResponse(
 @Serializable
 data class NetworkExplorerMonitorResponse(
     val isHealthy: Boolean,
-    val explorerMonitors: List<ExplorerMonitorResponse>
+    val monitors: List<ExplorerMonitorResponse>
 )
 
 @Response
@@ -149,14 +172,14 @@ data class ExplorerMonitorResponse(
 @Serializable
 data class NetworkAbfiMonitorResponse(
     val isHealthy: Boolean,
-    val abfiMonitors: List<AbfiMonitorResponse>
+    val monitors: List<AbfiMonitorResponse>
 )
 
 @Response
 @Serializable
 data class AbfiMonitorResponse(
     val networkId: String,
-    val abfiId: String,
+    val id: String,
     val version: String = "",
     val host: String,
     val prefix: String,
@@ -198,14 +221,14 @@ data class AbfiBlockInfoResponse(
 @Serializable
 data class NetworkVbfiMonitorResponse(
     val isHealthy: Boolean,
-    val vbfiMonitors: List<VbfiMonitorResponse>
+    val monitors: List<VbfiMonitorResponse>
 )
 
 @Response
 @Serializable
 data class VbfiMonitorResponse(
     val networkId: String,
-    val vbfiId: String,
+    val id: String,
     val version: String = "",
     val host: String,
     val lastBlockHeight: Int = 0,

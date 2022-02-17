@@ -20,11 +20,11 @@ import kotlin.time.ExperimentalTime
 class ExplorerMonitorRepository(
     private val database: Database
 ) {
-    fun create(networkId: String, explorerId: String, host: String, monitor: ExplorerMonitor) {
+    fun create(networkId: String, id: String, host: String, monitor: ExplorerMonitor) {
         transaction(database) {
             ExplorerMonitorTable.insert {
                 it[this.networkId] = networkId
-                it[this.explorerId] = explorerId
+                it[this.id] = id
                 it[this.host] = host
                 it[blockCount] = monitor.blockCount
                 it[atvCount] = monitor.atvCount
@@ -39,16 +39,16 @@ class ExplorerMonitorRepository(
     }
 
     @OptIn(ExperimentalTime::class)
-    fun find(networkId: String, explorerIds: Set<String>): List<ExplorerMonitorRecord> = transaction(database) {
+    fun find(networkId: String, ids: Set<String>): List<ExplorerMonitorRecord> = transaction(database) {
         ExplorerMonitorTable.select {
             (ExplorerMonitorTable.networkId.lowerCase() eq networkId.lowercase()) and
-                    (ExplorerMonitorTable.explorerId.lowerCase() inList explorerIds)
+                    (ExplorerMonitorTable.id.lowerCase() inList ids)
         }.orderBy(
             ExplorerMonitorTable.addedAt,
             SortOrder.DESC
         ).distinctBy {
             it[ExplorerMonitorTable.networkId]
-            it[ExplorerMonitorTable.explorerId]
+            it[ExplorerMonitorTable.id]
         }.map {
             it.toExplorerMonitorRecord()
         }

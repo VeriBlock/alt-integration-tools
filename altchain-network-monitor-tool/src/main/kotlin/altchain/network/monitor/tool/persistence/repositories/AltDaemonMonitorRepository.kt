@@ -20,11 +20,11 @@ import kotlin.time.ExperimentalTime
 class AltDaemonMonitorRepository(
     private val database: Database
 ) {
-    fun create(networkId: String, altDaemonId: String, host: String, monitor: AltDaemonMonitor) {
+    fun create(networkId: String, id: String, host: String, monitor: AltDaemonMonitor) {
         transaction(database) {
             AltDaemonMonitorTable.insert {
                 it[this.networkId] = networkId
-                it[this.altDaemonId] = altDaemonId
+                it[this.id] = id
                 it[this.host] = host
                 it[localHeight] = monitor.localHeight
                 it[networkHeight] = monitor.networkHeight
@@ -35,16 +35,16 @@ class AltDaemonMonitorRepository(
     }
 
     @OptIn(ExperimentalTime::class)
-    fun find(networkId: String, altDaemonIds: Set<String>): List<AltDaemonMonitorRecord> = transaction(database) {
+    fun find(networkId: String, ids: Set<String>): List<AltDaemonMonitorRecord> = transaction(database) {
         AltDaemonMonitorTable.select {
             (AltDaemonMonitorTable.networkId.lowerCase() eq networkId.lowercase()) and
-                    (AltDaemonMonitorTable.altDaemonId.lowerCase() inList altDaemonIds)
+                    (AltDaemonMonitorTable.id.lowerCase() inList ids)
         }.orderBy(
             AltDaemonMonitorTable.addedAt,
             SortOrder.DESC
         ).distinctBy {
             it[AltDaemonMonitorTable.networkId]
-            it[AltDaemonMonitorTable.altDaemonId]
+            it[AltDaemonMonitorTable.id]
         }.map {
             it.toAltDaemonMonitorRecord()
         }

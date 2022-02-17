@@ -6,8 +6,8 @@ import altchain.network.monitor.tool.service.explorers.Explorer
 class ExplorerService(
     private val explorers: Set<Explorer>
 ) {
-    suspend fun getExplorerState(networkId: String, explorerId: String, explorerConfig: ExplorerConfig) = explorers.firstOrNull {
-        it.type == explorerConfig.type
-    }?.getExplorerState(networkId, explorerId, explorerConfig)
-        ?: error("${explorerConfig.type} explorer is not implemented yet")
+    suspend fun getExplorerState(networkId: String, id: String, config: ExplorerConfig) = explorers.firstOrNull {
+        it.type == config.type
+    }?.getMonitor(networkId, id, config)
+        ?: error("${config.type} explorer is not implemented yet")
 }

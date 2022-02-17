@@ -15,8 +15,8 @@ import org.jetbrains.exposed.sql.javatime.timestamp
 
 object MinerMonitorTable : Table("miner_monitor") {
     val networkId = varchar("network_id")
-    val minerId = varchar("miner_id")
-    val minerVersion = varchar("miner_version")
+    val id = varchar("id")
+    val version = varchar("version")
     val host = varchar("host")
     val minerType = enumerationByName("miner_type", MinerType::class)
     val altchainKey = varchar("altchain_key").nullable()
@@ -32,8 +32,8 @@ object MinerMonitorTable : Table("miner_monitor") {
 
 data class MinerMonitorRecord(
     val networkId: String,
-    val minerId: String,
-    val minerVersion: String,
+    val id: String,
+    val version: String,
     val host: String,
     val minerType: MinerType,
     val altchainKey: String? = null,
@@ -48,7 +48,7 @@ data class MinerMonitorRecord(
 )
 
 data class MinerMonitor(
-    val minerVersion: String,
+    val version: String,
     val startedOperationCount: Int,
     val completedOperationCount: Int,
     val failedOperationCount: Int,
@@ -77,8 +77,8 @@ enum class MinerType {
 
 fun ResultRow.toMinerMonitorRecord(): MinerMonitorRecord = MinerMonitorRecord(
     networkId = this[MinerMonitorTable.networkId],
-    minerId = this[MinerMonitorTable.minerId],
-    minerVersion = this[MinerMonitorTable.minerVersion],
+    id = this[MinerMonitorTable.id],
+    version = this[MinerMonitorTable.version],
     host = this[MinerMonitorTable.host],
     minerType = this[MinerMonitorTable.minerType],
     altchainKey = this[MinerMonitorTable.altchainKey],

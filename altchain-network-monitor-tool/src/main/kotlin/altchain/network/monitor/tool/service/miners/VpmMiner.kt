@@ -29,18 +29,18 @@ class VpmMiner(
     }
 
     @OptIn(ExperimentalTime::class)
-    override suspend fun getMinerMonitor(networkId: String, minerId: String, minerConfig: MinerConfig): MinerMonitor {
-        httpClients.getOrPut("$networkId/$minerId") { createHttpClient(minerConfig.auth).also {
-            logger.info { "($networkId/$minerId) Creating http client..." }
+    override suspend fun getMonitor(networkId: String, id: String, config: MinerConfig): MinerMonitor {
+        httpClients.getOrPut("$networkId/$id") { createHttpClient(config.auth).also {
+            logger.info { "($networkId/$id) Creating http client..." }
         } }.also { httpClient ->
             val now = now()
             val version: String = try {
-                httpClient.get<VersionResponse>("${minerConfig.apiUrl}/api/version").name
+                httpClient.get<VersionResponse>("${config.apiUrl}/api/version").name
             } catch (exception: Exception) {
                 "UNKNOWN"
             }
-            val metrics: String = httpClient.get("${minerConfig.apiUrl}/metrics")
-            val debugInformation: DiagnosticInformation = httpClient.get("${minerConfig.apiUrl}/api/debug")
+            val metrics: String = httpClient.get("${config.apiUrl}/metrics")
+            val debugInformation: DiagnosticInformation = httpClient.get("${config.apiUrl}/api/debug")
 
             val generalMetrics = metrics.extractValuesFromMetrics(IMPORTANT_METRICS)
             val minerMetrics = metrics.extractValuesFromMetrics(MINER_METRICS)
@@ -56,10 +56,10 @@ class VpmMiner(
             val startDate = now().minus(Duration.seconds(uptimeSeconds))
             val latestRecords = minerMonitorRepository.findLatests(
                 networkId = networkId,
-                type = minerConfig.type,
-                minerId = minerId,
+                type = config.type,
+                id = id,
                 startDate = startDate,
-                limit = minerConfig.compareLatestRecordCount
+                limit = config.compareLatestRecordCount
             )
 
             val isMining = if (latestRecords.isEmpty()) {
@@ -73,7 +73,7 @@ class VpmMiner(
             }
 
             return MinerMonitor(
-                minerVersion = version,
+                version = version,
                 startedOperationCount = startedOperationCount,
                 completedOperationCount = completedOperationCount,
                 failedOperationCount = failedOperationCount,

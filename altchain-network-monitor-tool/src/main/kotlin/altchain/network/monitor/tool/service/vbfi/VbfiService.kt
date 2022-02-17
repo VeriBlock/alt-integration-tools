@@ -17,22 +17,22 @@ class VbfiService {
         HashMap()
     }
 
-    suspend fun getVbfiMonitor(networkId: String, vbfiId: String, vbfiConfig: VbfiConfig): VbfiMonitor {
-        httpClients.getOrPut("$networkId/$vbfiId") { createHttpClient(vbfiConfig.auth).also {
-            logger.info { "($networkId/$vbfiId) Creating http client..." }
+    suspend fun getMonitor(networkId: String, id: String, config: VbfiConfig): VbfiMonitor {
+        httpClients.getOrPut("$networkId/$id") { createHttpClient(config.auth).also {
+            logger.info { "($networkId/$id) Creating http client..." }
         } }.also { httpClient ->
-            val pingDto: PingDto = httpClient.get("${vbfiConfig.apiUrl}/api/ping")
+            val pingDto: PingDto = httpClient.get("${config.apiUrl}/api/ping")
 
-            val explorerDto: ExplorerDto = httpClient.get(vbfiConfig.explorerApiUrl)
+            val explorerDto: ExplorerDto = httpClient.get(config.explorerApiUrl)
             val explorerLastBlock = explorerDto.lastBlock.height
 
             val lastBlock = pingDto.lastBlock?.height ?: 0
             val lastBlockDifference = abs(lastBlock - explorerLastBlock)
-            val isLastBlockSynchronized = lastBlock > 0 && lastBlockDifference <= vbfiConfig.maxLastBlockDifference
+            val isLastBlockSynchronized = lastBlock > 0 && lastBlockDifference <= config.maxLastBlockDifference
 
             val lastBlockFinalizedBtc = pingDto.lastFinalizedBlockBtc?.height ?: 0
             val lastBlockFinalizedBtcDifference = abs(lastBlockFinalizedBtc - explorerLastBlock)
-            val isLastBlockFinalizedBtcSynchronized = lastBlockFinalizedBtc > 0 && lastBlockFinalizedBtcDifference <= vbfiConfig.maxLastBlockFinalizedBtcDifference
+            val isLastBlockFinalizedBtcSynchronized = lastBlockFinalizedBtc > 0 && lastBlockFinalizedBtcDifference <= config.maxLastBlockFinalizedBtcDifference
 
             return VbfiMonitor(
                 vbfiVersion = pingDto.version,

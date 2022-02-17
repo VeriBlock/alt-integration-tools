@@ -20,12 +20,12 @@ import kotlin.time.ExperimentalTime
 class NodeCoreMonitorRepository(
     private val database: Database
 ) {
-    fun create(networkId: String, nodecoreId: String, host: String, monitor: NodeCoreMonitor) {
+    fun create(networkId: String, id: String, host: String, monitor: NodeCoreMonitor) {
         transaction(database) {
             NodeCoreMonitorTable.insert {
                 it[this.networkId] = networkId
-                it[this.nodecoreId] = nodecoreId
-                it[nodecoreVersion] = monitor.nodecoreVersion
+                it[this.id] = id
+                it[version] = monitor.version
                 it[this.host] = host
                 it[localHeight] = monitor.localHeight
                 it[networkHeight] = monitor.networkHeight
@@ -36,16 +36,16 @@ class NodeCoreMonitorRepository(
     }
 
     @OptIn(ExperimentalTime::class)
-    fun find(networkId: String, nodecoreIds: Set<String>): List<NodeCoreMonitorRecord> = transaction(database) {
+    fun find(networkId: String, ids: Set<String>): List<NodeCoreMonitorRecord> = transaction(database) {
         NodeCoreMonitorTable.select {
             (NodeCoreMonitorTable.networkId.lowerCase() eq networkId.lowercase()) and
-                    (NodeCoreMonitorTable.nodecoreId.lowerCase() inList nodecoreIds)
+                    (NodeCoreMonitorTable.id.lowerCase() inList ids)
         }.orderBy(
             NodeCoreMonitorTable.addedAt,
             SortOrder.DESC
         ).distinctBy {
             it[NodeCoreMonitorTable.networkId]
-            it[NodeCoreMonitorTable.nodecoreId]
+            it[NodeCoreMonitorTable.id]
         }.map {
             it.toNodeCoreMonitorRecord()
         }

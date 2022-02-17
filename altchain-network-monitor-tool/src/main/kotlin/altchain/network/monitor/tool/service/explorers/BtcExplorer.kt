@@ -19,16 +19,16 @@ class BtcExplorer : Explorer {
         HashMap()
     }
 
-    override suspend fun getExplorerState(networkId: String, explorerId: String, explorerConfig: ExplorerConfig): ExplorerMonitor {
-        httpClients.getOrPut("$networkId/$explorerId") { WebClient(BrowserVersion.FIREFOX_78).also { webClient ->
-            webClient.addDefaultOptions(explorerConfig.auth)
+    override suspend fun getMonitor(networkId: String, id: String, config: ExplorerConfig): ExplorerMonitor {
+        httpClients.getOrPut("$networkId/$id") { WebClient(BrowserVersion.FIREFOX_78).also { webClient ->
+            webClient.addDefaultOptions(config.auth)
             webClient.options.isJavaScriptEnabled = false
-            logger.info { "($networkId/$explorerId) Creating http client..." }
+            logger.info { "($networkId/$id) Creating http client..." }
         } }.also { webClient ->
             val builtBtcExplorerUrl = when {
-                explorerConfig.url.contains("blocks?limit=") -> explorerConfig.url
-                explorerConfig.url.endsWith("/") -> "${explorerConfig.url}blocks?limit=${explorerConfig.blockCount}"
-                else -> "${explorerConfig.url}/blocks?limit=${explorerConfig.blockCount}"
+                config.url.contains("blocks?limit=") -> config.url
+                config.url.endsWith("/") -> "${config.url}blocks?limit=${config.blockCount}"
+                else -> "${config.url}/blocks?limit=${config.blockCount}"
             }
 
             val btcExplorerPage = webClient.getPage<HtmlPage>(builtBtcExplorerUrl)
@@ -59,7 +59,7 @@ class BtcExplorer : Explorer {
                 )
             }.toSet()
 
-            return blockInfo.toExplorerMonitor(explorerConfig)
+            return blockInfo.toExplorerMonitor(config)
         }
     }
 }

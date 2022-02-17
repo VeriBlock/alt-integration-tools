@@ -9,8 +9,8 @@ import org.jetbrains.exposed.sql.javatime.timestamp
 
 object NodeCoreMonitorTable : Table("nodecore_monitor") {
     val networkId = varchar("network_id")
-    val nodecoreId = varchar("nodecore_id")
-    val nodecoreVersion = varchar("nodecore_version")
+    val id = varchar("id")
+    val version = varchar("version")
     val host = varchar("host")
     val localHeight = integer("local_height")
     val networkHeight = integer("network_height")
@@ -20,8 +20,8 @@ object NodeCoreMonitorTable : Table("nodecore_monitor") {
 
 data class NodeCoreMonitorRecord(
     val networkId: String,
-    val nodecoreId: String,
-    val nodecoreVersion: String,
+    val id: String,
+    val version: String,
     val host: String,
     val localHeight: Int,
     val networkHeight: Int,
@@ -30,7 +30,7 @@ data class NodeCoreMonitorRecord(
 )
 
 data class NodeCoreMonitor(
-    val nodecoreVersion: String,
+    val version: String,
     val localHeight: Int,
     val networkHeight: Int,
     val isSynchronized: Boolean,
@@ -39,8 +39,8 @@ data class NodeCoreMonitor(
 
 fun ResultRow.toNodeCoreMonitorRecord(): NodeCoreMonitorRecord = NodeCoreMonitorRecord(
     this[NodeCoreMonitorTable.networkId],
-    this[NodeCoreMonitorTable.nodecoreId],
-    this[NodeCoreMonitorTable.nodecoreVersion],
+    this[NodeCoreMonitorTable.id],
+    this[NodeCoreMonitorTable.version],
     this[NodeCoreMonitorTable.host],
     this[NodeCoreMonitorTable.localHeight],
     this[NodeCoreMonitorTable.networkHeight],

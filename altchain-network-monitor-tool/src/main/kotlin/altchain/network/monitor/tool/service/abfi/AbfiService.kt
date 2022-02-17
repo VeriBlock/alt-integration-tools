@@ -24,18 +24,18 @@ class AbfiService(
         HashMap()
     }
 
-    suspend fun getAbfiMonitor(networkId: String, abfiId: String, abfiConfig: AbfiConfig): AbfiMonitor {
-        httpClients.getOrPut("$networkId/$abfiId") { createHttpClient(abfiConfig.auth).also {
-            logger.info { "($networkId/$abfiId) Creating http client..." }
+    suspend fun getMonitor(networkId: String, id: String, config: AbfiConfig): AbfiMonitor {
+        httpClients.getOrPut("$networkId/$id") { createHttpClient(config.auth).also {
+            logger.info { "($networkId/$id) Creating http client..." }
         } }.also { httpClient ->
-            val pingDto: PingDto = httpClient.get("${abfiConfig.apiUrl}/${abfiConfig.prefix}/ping")
+            val pingDto: PingDto = httpClient.get("${config.apiUrl}/${config.prefix}/ping")
             val diagnostic = Json.encodeToString(pingDto)
 
             val lastFinalizedBlockHeight = pingDto.lastFinalizedBlockBtc?.height ?: 0
-            val lastNetworkBlockHeight = altchainService.getBlockChainInfo(abfiConfig.siKey).localHeight
+            val lastNetworkBlockHeight = altchainService.getMonitor(config.siKey).localHeight
 
             val blockDifference = abs(lastFinalizedBlockHeight - lastNetworkBlockHeight)
-            val isSynchronized = lastFinalizedBlockHeight > 0 && blockDifference <= abfiConfig.maxBlockDifference
+            val isSynchronized = lastFinalizedBlockHeight > 0 && blockDifference <= config.maxBlockDifference
 
             return AbfiMonitor(
                 abfiVersion = pingDto.version,
