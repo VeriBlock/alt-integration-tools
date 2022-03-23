@@ -34,6 +34,9 @@ class NodeCoreService {
             val response: RpcResponse = httpClient.post("http://${config.host}:${config.port}/api") {
                 // Since jsonBody is a string, we have to specify it is Json content type
                 body = TextContent("""{"jsonrpc": "2.0", "method": "getstateinfo", "params": {}, "id": 1}""", contentType = ContentType.Application.Json)
+                if (config.password != null) {
+                    headers.append("X-VBK-RPC-PASSWORD", config.password)
+                }
             }
 
             val nodeCoreState: NodeCoreState = json.decodeFromString(response.result.toString())
