@@ -370,7 +370,7 @@ private fun MinerMonitorRecord.toMinerMonitorResponse(
     } else {
         null
     }
-    val isHealthyByMining = if (!isMining) {
+    val isHealthyByMining = if (verifyIsMining && !isMining) {
         "$id is not creating new operations"
     } else {
         null
