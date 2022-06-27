@@ -130,6 +130,7 @@ class NetworkStatus(
         } else {
             null
         }
+
         val networkExplorerMonitorResponse = if (network.explorers.isNotEmpty()) {
             val monitors = explorerMonitorRepository.find(
                 networkId = networkId,
@@ -277,6 +278,32 @@ class NetworkStatus(
             null
         }
 
+        // Checks between components...
+        val networkHeights = (networkAltDaemonMonitorResponse?.monitors?.flatMap {
+            listOf("${it.altDaemonId} localHeight" to it.localHeight, "${it.altDaemonId} networkHeight" to it.networkHeight)
+        } ?: emptyList()) + (networkAbfiMonitorResponse?.monitors?.map {
+            "Abfi ${it.id} lastNetworkBlockHeight" to it.lastNetworkBlockHeight
+        } ?: emptyList())
+
+        val lowest = networkHeights.minByOrNull { it.second }
+        val highest = networkHeights.maxByOrNull { it.second }
+
+        val networkHeightHealthy: Boolean
+        val networkHeightDiagnostic: String
+        if (lowest != null && highest != null) {
+            val difference = highest.second - lowest.second
+            if (difference > 1) {
+                networkHeightHealthy = false
+                networkHeightDiagnostic = "${lowest.first} is ${lowest.second} while ${highest.first} is ${highest.second}"
+            } else {
+                networkHeightHealthy = true
+                networkHeightDiagnostic = ""
+            }
+        } else {
+            networkHeightHealthy = true
+            networkHeightDiagnostic = ""
+        }
+
         val isHealthy = networkNodeCoreMonitorResponse?.isHealthy ?: true &&
                 networkAltDaemonMonitorResponse?.isHealthy ?: true &&
                 networkExplorerMonitorResponse?.isHealthy ?: true &&
@@ -284,7 +311,8 @@ class NetworkStatus(
                 networkVbfiMonitorResponse?.isHealthy ?: true &&
                 networkMinerMonitorResponse?.isVpmHealthy ?: true &&
                 networkMinerMonitorResponse?.isApmHealthy ?: true &&
-                networkPopSubsidiesMonitorResponse?.isHealthy ?: true
+                networkPopSubsidiesMonitorResponse?.isHealthy ?: true &&
+                networkHeightHealthy
 
         val nodeCoreDiagnostics = networkNodeCoreMonitorResponse?.monitors?.filter {
             !it.isHealthy.isHealthy
@@ -332,8 +360,11 @@ class NetworkStatus(
             networkId = networkId,
             isHealthy = HealthyStatusReportResponse(
                 isHealthy = isHealthy,
-                diagnostics = (nodeCoreDiagnostics + altDaemonDiagnostics + explorerDiagnostics + abfiDiagnostics + minerDiagnostics + vbfiDiagnostics + popSubsidiesDiagnostics).ifEmpty {
-                    null
+                diagnostics = (
+                        listOf(networkHeightDiagnostic) + nodeCoreDiagnostics + altDaemonDiagnostics +
+                                explorerDiagnostics + abfiDiagnostics + minerDiagnostics + vbfiDiagnostics + popSubsidiesDiagnostics
+                ).ifEmpty {
+                        null
                 }
             ),
             networkNodeCoreMonitor = networkNodeCoreMonitorResponse,
